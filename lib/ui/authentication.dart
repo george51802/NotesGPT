@@ -1,4 +1,4 @@
-import 'package:crypto_wallet/net/flutterfire.dart';
+import 'package:notesgpt/net/flutterfire.dart';
 import 'package:flutter/material.dart';
 
 import 'home_view.dart';

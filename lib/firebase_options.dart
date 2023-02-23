@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,16 +49,6 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBU4CqGkTIt5VnbcASJ4Fi76SnNH6CYCuE',
-    appId: '1:203285524158:web:a2f61f02f9ee14a6b878ef',
-    messagingSenderId: '203285524158',
-    projectId: 'notesgpt-b38fc',
-    authDomain: 'notesgpt-b38fc.firebaseapp.com',
-    storageBucket: 'notesgpt-b38fc.appspot.com',
-    measurementId: 'G-V6ZWECKF9P',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCH2Jj_g9BhH2lItwfP0Bi7IQxhNFCuGeo',
     appId: '1:203285524158:android:d5be13453dbf5138b878ef',
@@ -62,16 +58,6 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCpLm8L-gJc0BjIbwp4HGbtpYjW3S4-Ji0',
-    appId: '1:203285524158:ios:9566a2b41df15bf6b878ef',
-    messagingSenderId: '203285524158',
-    projectId: 'notesgpt-b38fc',
-    storageBucket: 'notesgpt-b38fc.appspot.com',
-    iosClientId: '203285524158-tm4ipha7isvjh56o81cvjiud93md8dj6.apps.googleusercontent.com',
-    iosBundleId: 'com.example.notesgpt',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCpLm8L-gJc0BjIbwp4HGbtpYjW3S4-Ji0',
     appId: '1:203285524158:ios:9566a2b41df15bf6b878ef',
     messagingSenderId: '203285524158',

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>42539442759-9uervurq7ipcsd6saifrgd5d57g1njbo.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.42539442759-9uervurq7ipcsd6saifrgd5d57g1njbo</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCBKAVeOZCrvA-nP8fUg-ZE3HIU4ek3nAM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>42539442759</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.cryptoWallet</string>
+	<key>PROJECT_ID</key>
+	<string>crypto-wallet-5de29</string>
+	<key>STORAGE_BUCKET</key>
+	<string>crypto-wallet-5de29.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:42539442759:ios:eaf2de862c0d76f8920762</string>
+</dict>
+</plist>

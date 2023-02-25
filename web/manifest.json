@@ -1,6 +1,6 @@
 {
-    "name": "notesgpt",
-    "short_name": "notesgpt",
+    "name": "test",
+    "short_name": "test",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

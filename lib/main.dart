@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:notesgpt/ui/welcome_screen.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'ui/authentication.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'NotesGPT',
-      home: Authentication(),
+      home: WelcomeScreen(),
     );
   }
 }

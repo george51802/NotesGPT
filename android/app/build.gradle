@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
-apply from: "C:\\Users\\nrsan\\OneDrive\\Desktop\\WebDevCourse\\Code\\flutter_windows_3.7.3-stable\\flutter/packages/flutter_tools/gradle/flutter.gradle"
+apply from: "$flutter/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     compileSdkVersion flutter.compileSdkVersion

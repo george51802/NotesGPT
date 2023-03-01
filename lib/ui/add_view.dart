@@ -1,5 +1,7 @@
+import 'package:notesgpt/net/auth_service.dart';
 import 'package:notesgpt/net/flutterfire.dart';
 import 'package:flutter/material.dart';
+import 'package:notesgpt/ui/welcome_screen.dart';
 
 class AddView extends StatefulWidget {
   AddView({Key key = const ValueKey('default_key')}) : super(key: key);
@@ -56,10 +58,15 @@ class _AddViewState extends State<AddView> {
             ),
             child: MaterialButton(
               onPressed: () async {
-                await addCoin(dropdownValue, _amountController.text);
-                Navigator.of(context).pop();
+                await AuthService().signOut();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WelcomeScreen(),
+                  ),
+                );
               },
-              child: Text("Add"),
+              child: Text("Sign Out"),
             ),
           ),
         ],

@@ -1,3 +1,4 @@
+import 'package:notesgpt/net/auth_service.dart';
 import 'package:notesgpt/net/flutterfire.dart';
 import 'package:flutter/material.dart';
 import 'package:notesgpt/ui/sign_in_view.dart';
@@ -208,7 +209,7 @@ class _AuthenticationState extends State<Authentication> {
                     ),
                     child: TextButton(
                       onPressed: () {
-                        // TODO: Implement Google Sign In
+                        AuthService().signInWithGoogle();
                       },
                       child: Image.asset(
                         "assets/google.png",

@@ -1,5 +1,6 @@
 import 'package:notesgpt/net/flutterfire.dart';
 import 'package:flutter/material.dart';
+import 'package:notesgpt/ui/sign_in_view.dart';
 
 import 'home_view.dart';
 import 'welcome_screen.dart';
@@ -44,20 +45,22 @@ class _AuthenticationState extends State<Authentication> {
           iconTheme: IconThemeData(color: Colors.black),
           title: Align(
             alignment: Alignment.centerLeft,
-            child: Text("Sign Up",
-                style: TextStyle(color: Colors.black, fontSize: 35.0)),
+            child: Text("Create an account",
+                style: TextStyle(color: Colors.black, fontSize: 25.0)),
           ),
           backgroundColor: Colors.white,
         ),
         body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height / 1.3,
           decoration: BoxDecoration(
             color: Colors.white,
           ),
+          padding: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(height: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -67,14 +70,14 @@ class _AuthenticationState extends State<Authentication> {
                   ),
                   SizedBox(height: 10),
                   Container(
-                    width: MediaQuery.of(context).size.width / 1.3,
+                    width: 330,
                     height: 65,
                     decoration: BoxDecoration(
                       color: Color.fromARGB(
                           255, 244, 244, 244), // light gray background
                       border: Border.all(
                         color:
-                            Color.fromARGB(255, 189, 189, 189), // gray border
+                            Color.fromARGB(255, 221, 221, 221), // gray border
                       ),
                       borderRadius:
                           BorderRadius.circular(18.0), // border radius
@@ -95,7 +98,7 @@ class _AuthenticationState extends State<Authentication> {
                   ),
                 ],
               ),
-              SizedBox(height: MediaQuery.of(context).size.height / 35),
+              SizedBox(height: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -103,14 +106,14 @@ class _AuthenticationState extends State<Authentication> {
                       style: TextStyle(color: Colors.black, fontSize: 16.0)),
                   SizedBox(height: 10),
                   Container(
-                    width: MediaQuery.of(context).size.width / 1.3,
+                    width: 330,
                     height: 65,
                     decoration: BoxDecoration(
                       color: Color.fromARGB(
                           255, 244, 244, 244), // light gray background
                       border: Border.all(
                         color:
-                            Color.fromARGB(255, 189, 189, 189), // gray border
+                            Color.fromARGB(255, 221, 221, 221), // gray border
                       ),
                       borderRadius:
                           BorderRadius.circular(18.0), // border radius
@@ -132,12 +135,21 @@ class _AuthenticationState extends State<Authentication> {
                   ),
                 ],
               ),
-              SizedBox(height: MediaQuery.of(context).size.height / 15),
+              SizedBox(height: 50),
               Container(
-                width: MediaQuery.of(context).size.width / 1.3,
+                width: 330,
                 height: 60,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
+                  borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xff1152FD).withOpacity(
+                          0.5), // set the color and opacity of the glow
+                      spreadRadius: 5, // set the spread radius of the glow
+                      blurRadius: 25, // set the blur radius of the glow
+                      offset: Offset(0, 0), // set the offset of the glow
+                    ),
+                  ],
                   color: Color(0xff1152FD),
                 ),
                 child: MaterialButton(
@@ -160,30 +172,110 @@ class _AuthenticationState extends State<Authentication> {
                           fontWeight: FontWeight.bold)),
                 ),
               ),
-              SizedBox(height: MediaQuery.of(context).size.height / 35),
+              SizedBox(height: 20),
               Container(
-                width: MediaQuery.of(context).size.width / 1.4,
-                height: 45,
+                margin: EdgeInsets.symmetric(vertical: 30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey,
+                        thickness: 0.3,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text("Or sign up with"),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey,
+                        thickness: 0.3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width / 3,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15.0),
+                      color: Color.fromARGB(255, 208, 208, 208),
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        // TODO: Implement Google Sign In
+                      },
+                      child: Image.asset(
+                        "assets/google.png",
+                        height: 30,
+                        width: 30,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 3,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15.0),
+                      color: Color.fromARGB(255, 208, 208, 208),
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        // TODO: Implement Apple Sign In
+                      },
+                      child: Image.asset(
+                        "assets/apple.png",
+                        height: 30,
+                        width: 30,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Container(
+                width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   color: Colors.white,
                 ),
-                child: MaterialButton(
-                  onPressed: () async {
-                    bool shouldNavigate =
-                        await signIn(_emailField.text, _passwordField.text);
-                    if (shouldNavigate) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeView(),
+                child: Column(
+                  children: [
+                    //SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Signin()),
+                        );
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                          style:
+                              TextStyle(color: Color.fromARGB(255, 66, 66, 66)),
+                          children: [
+                            TextSpan(
+                              text: "Already have an account? ",
+                              style: TextStyle(fontWeight: FontWeight.normal),
+                            ),
+                            TextSpan(
+                              text: "Sign in",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
-                      );
-                    }
-                  },
-                  child: Text("Login"),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              Spacer(),
             ],
           ),
         ),

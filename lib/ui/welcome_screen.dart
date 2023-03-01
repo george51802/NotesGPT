@@ -12,14 +12,16 @@ class WelcomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Add your app logo here
-          Center(child: Image.asset('assets/noteslogo.png', width: 300)),
-          SizedBox(height: 32),
+          Center(
+              child:
+                  Image.asset('assets/noteslogo.png', width: 250, height: 500)),
+          SizedBox(height: 100),
           ElevatedButton(
             child: Text(
-              'Sign Up',
+              'Create an account',
               style: TextStyle(
                 color: Color(0xff1152FD),
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w800,
               ),
             ),
             style: ElevatedButton.styleFrom(
@@ -27,7 +29,7 @@ class WelcomeScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18.0),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 130.0, vertical: 18.0),
+              padding: EdgeInsets.symmetric(horizontal: 90.0, vertical: 20.0),
             ),
             onPressed: () {
               Navigator.push(
@@ -36,15 +38,29 @@ class WelcomeScreen extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 5),
           TextButton(
-            child: Text('Sign In', style: TextStyle(color: Colors.white)),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => WelcomeScreen()),
+                MaterialPageRoute(builder: (context) => Signin()),
               );
             },
+            child: RichText(
+              text: TextSpan(
+                style: TextStyle(color: Colors.white),
+                children: [
+                  TextSpan(
+                    text: "Already have an account? ",
+                    style: TextStyle(fontWeight: FontWeight.normal),
+                  ),
+                  TextSpan(
+                    text: "Sign in",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

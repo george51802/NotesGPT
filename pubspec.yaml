@@ -42,6 +42,7 @@ dependencies:
   firebase: ^9.0.3
   auth: ^8.2.0+02
   cloud_firestore: ^4.4.3
+  get: ^4.6.1 # add this line
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +71,8 @@ flutter:
       - assets/noteslogo.png
       - assets/apple.png
       - assets/google.png
+      - assets/noteslogo2.png
+      - assets/noteslogo3.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

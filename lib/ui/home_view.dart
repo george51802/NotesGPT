@@ -19,16 +19,7 @@ class _HomeViewState extends State<HomeView> {
   double tether = 0.0;
 
   @override
-  initState() {
-    updateValues();
-  }
-
-  updateValues() async {
-    bitcoin = await getPrice("bitcoin");
-    ethereum = await getPrice("ethereum");
-    tether = await getPrice("tether");
-    setState(() {});
-  }
+  initState() {}
 
   @override
   Widget build(BuildContext context) {

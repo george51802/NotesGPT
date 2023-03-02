@@ -210,6 +210,12 @@ class _AuthenticationState extends State<Authentication> {
                     child: TextButton(
                       onPressed: () {
                         AuthService().signInWithGoogle();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeView(),
+                          ),
+                        );
                       },
                       child: Image.asset(
                         "assets/google.png",

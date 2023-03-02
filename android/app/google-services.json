@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "203285524158",
+    "project_id": "notesgpt-b38fc",
+    "storage_bucket": "notesgpt-b38fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203285524158:android:d5be13453dbf5138b878ef",
+        "android_client_info": {
+          "package_name": "com.example.notesgpt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "203285524158-ohp862suv860rd0h01pj4ahmln2bmi4f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.notesgpt",
+            "certificate_hash": "9647a967e334daa5e43d110ce031b9b4897690c8"
+          }
+        },
+        {
+          "client_id": "203285524158-ssoghu230r58pbm3k0f40dq31viisgfs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH2Jj_g9BhH2lItwfP0Bi7IQxhNFCuGeo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "203285524158-7qvseoc5lsehl0nioq1umboas1o2j1so.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "203285524158-tm4ipha7isvjh56o81cvjiud93md8dj6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.notesgpt"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

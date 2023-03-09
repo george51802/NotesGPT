@@ -86,7 +86,7 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 45),
                   Container(
                     width: 60 + 16 + MediaQuery.of(context).size.width * 0.8,
                     height: 95,

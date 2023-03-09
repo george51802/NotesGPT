@@ -2,81 +2,84 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:notesgpt/net/auth_service.dart';
 import 'package:notesgpt/net/flutterfire.dart';
 import 'package:flutter/material.dart';
-import 'package:notesgpt/ui/authentication.dart';
+import 'package:notesgpt/net/snackbars.dart';
+import 'package:notesgpt/ui/user_sign_up.dart';
+import 'package:notesgpt/ui/user_sign_in.dart';
 
 import 'home_view.dart';
 import 'welcome_screen.dart';
 
-class Signin extends StatefulWidget {
-  Signin({Key? key}) : super(key: key);
+class UserSignIn extends StatefulWidget {
+  UserSignIn({Key? key}) : super(key: key);
 
   @override
   _AuthenticationState createState() => _AuthenticationState();
 }
 
-class _AuthenticationState extends State<Signin> {
+class _AuthenticationState extends State<UserSignIn> {
   TextEditingController _emailField = TextEditingController();
   TextEditingController _passwordField = TextEditingController();
+  final GlobalKey<FormState> _key = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WelcomeScreen(),
-          ),
-        );
-        return false;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WelcomeScreen(),
-                ),
-              );
-            },
-          ),
-          elevation: 0,
-          iconTheme: IconThemeData(color: Colors.black),
-          title: Align(
-            alignment: Alignment.centerLeft,
-            child: Text("Sign In",
-                style: TextStyle(color: Colors.black, fontSize: 25.0)),
-          ),
-          backgroundColor: Colors.white,
+    User? user = FirebaseAuth.instance.currentUser;
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        flexibleSpace: Image.asset(
+          'assets/login.png',
+          height: 400,
+          fit: BoxFit.cover,
         ),
-        body: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height / 1.3,
+        toolbarHeight: 280,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(40.0),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30.0),
+                topRight: Radius.circular(30.0),
+              ),
+              color: Colors.white,
+            ),
+            height: 30.0,
+          ),
+        ),
+      ),
+      body: Form(
+        key: _key,
+        child: Container(
+          //width: double.infinity,
+          //height: MediaQuery.of(context).size.height / 1.3,
           decoration: BoxDecoration(
             color: Colors.white,
           ),
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "E-mail",
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
+                    "Log in",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 20),
                   Container(
                     width: 330,
-                    height: 65,
+                    height: 55,
                     decoration: BoxDecoration(
                       color: Color.fromARGB(
-                          255, 244, 244, 244), // light gray background
+                          255, 255, 255, 255), // light gray background
                       border: Border.all(
                         color:
                             Color.fromARGB(255, 221, 221, 221), // gray border
@@ -87,13 +90,14 @@ class _AuthenticationState extends State<Signin> {
                     child: TextFormField(
                       style: TextStyle(color: Colors.black), // black text color
                       controller: _emailField,
+                      validator: validateEmail,
                       decoration: InputDecoration(
-                        hintText: "example@gmail.com",
+                        hintText: "Email",
                         hintStyle: TextStyle(
-                            color: Color.fromARGB(255, 221, 221,
-                                221)), // set hint text color to gray
+                            color: Color.fromARGB(255, 145, 145,
+                                145)), // set hint text color to gray
                         contentPadding:
-                            EdgeInsets.fromLTRB(18.0, 20.0, 16.0, 8.0),
+                            EdgeInsets.fromLTRB(18.0, 5.0, 0.0, 0.0),
                         border: InputBorder.none, // remove underline
                       ),
                     ),
@@ -104,15 +108,12 @@ class _AuthenticationState extends State<Signin> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Password",
-                      style: TextStyle(color: Colors.black, fontSize: 16.0)),
-                  SizedBox(height: 10),
                   Container(
                     width: 330,
-                    height: 65,
+                    height: 55,
                     decoration: BoxDecoration(
                       color: Color.fromARGB(
-                          255, 244, 244, 244), // light gray background
+                          255, 255, 255, 255), // light gray background
                       border: Border.all(
                         color:
                             Color.fromARGB(255, 221, 221, 221), // gray border
@@ -123,30 +124,31 @@ class _AuthenticationState extends State<Signin> {
                     child: TextFormField(
                       style: TextStyle(color: Colors.black), // black text color
                       controller: _passwordField,
+                      validator: validatePassword,
                       obscureText: true,
                       decoration: InputDecoration(
                         hintText: "••••••••••••",
                         hintStyle: TextStyle(
-                            color: Color.fromARGB(255, 221, 221,
-                                221)), // set hint text color to gray
+                            color: Color.fromARGB(255, 145, 145,
+                                145)), // set hint text color to gray
                         contentPadding:
-                            EdgeInsets.fromLTRB(18.0, 20.0, 16.0, 8.0),
+                            EdgeInsets.fromLTRB(18.0, 5.0, 0.0, 0.0),
                         border: InputBorder.none, // remove underline
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 25),
               Container(
                 width: 330,
-                height: 60,
+                height: 55,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20.0),
                   boxShadow: [
                     BoxShadow(
                       color: Color(0xff1152FD).withOpacity(
-                          0.5), // set the color and opacity of the glow
+                          0.3), // set the color and opacity of the glow
                       spreadRadius: 5, // set the spread radius of the glow
                       blurRadius: 25, // set the blur radius of the glow
                       offset: Offset(0, 0), // set the offset of the glow
@@ -156,15 +158,67 @@ class _AuthenticationState extends State<Signin> {
                 ),
                 child: MaterialButton(
                   onPressed: () async {
-                    bool shouldNavigate =
-                        await signIn(_emailField.text, _passwordField.text);
-                    if (shouldNavigate) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeView(),
-                        ),
-                      );
+                    if (_key.currentState!.validate()) {
+                      ScaffoldMessengerState scaffoldMessenger =
+                          ScaffoldMessenger.of(context);
+                      bool shouldNavigate =
+                          await register(_emailField.text, _passwordField.text);
+                      scaffoldMessenger
+                          .showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                // ignore: prefer_const_literals_to_create_immutables
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 15,
+                                    width: 15,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Color(0xff1152FD)),
+                                      backgroundColor: Colors.white,
+                                      strokeWidth: 3.0,
+                                    ),
+                                  ),
+                                  Text('  Please wait...',
+                                      style: TextStyle(
+                                          color: Color(0xff1152FD),
+                                          fontWeight: FontWeight.bold))
+                                ],
+                              ),
+                              backgroundColor: Colors.white,
+                              behavior: SnackBarBehavior.floating,
+                              width: MediaQuery.of(context).size.width / 1.5,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              // content: Text(
+                              //   'Loading.. please wait',
+                              //   style: TextStyle(color: Colors.white),
+                              //   textAlign: TextAlign.center,
+                              // ),
+                              // behavior: SnackBarBehavior.floating,
+                              // duration: Duration(seconds: 3),
+                              // backgroundColor: Color(0xff1152FD),
+                              // width: MediaQuery.of(context).size.width / 1.8,
+                              // shape: RoundedRectangleBorder(
+                              //   borderRadius: BorderRadius.circular(15.0),
+                              // ),
+                            ),
+                          )
+                          .closed
+                          .then((SnackBarClosedReason reason) async {
+                        if (shouldNavigate) {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomeView(),
+                            ),
+                          );
+                          scaffoldMessenger.hideCurrentSnackBar();
+                        }
+                      });
                     }
                   },
                   child: Text("Sign In",
@@ -174,9 +228,9 @@ class _AuthenticationState extends State<Signin> {
                           fontWeight: FontWeight.bold)),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 0),
               Container(
-                margin: EdgeInsets.symmetric(vertical: 30.0),
+                margin: EdgeInsets.symmetric(vertical: 25.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -186,9 +240,9 @@ class _AuthenticationState extends State<Signin> {
                         thickness: 0.3,
                       ),
                     ),
-                    SizedBox(width: 10),
+                    SizedBox(width: 30),
                     Text("Or sign in with"),
-                    SizedBox(width: 10),
+                    SizedBox(width: 30),
                     Expanded(
                       child: Divider(
                         color: Colors.grey,
@@ -202,8 +256,8 @@ class _AuthenticationState extends State<Signin> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width: MediaQuery.of(context).size.width / 3,
-                    height: 60,
+                    width: MediaQuery.of(context).size.width / 3.4,
+                    height: 55,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15.0),
                       color: Color.fromARGB(255, 208, 208, 208),
@@ -220,15 +274,15 @@ class _AuthenticationState extends State<Signin> {
                       },
                       child: Image.asset(
                         "assets/google.png",
-                        height: 30,
-                        width: 30,
+                        height: 23,
+                        width: 23,
                       ),
                     ),
                   ),
                   SizedBox(width: 20),
                   Container(
-                    width: MediaQuery.of(context).size.width / 3,
-                    height: 60,
+                    width: MediaQuery.of(context).size.width / 3.4,
+                    height: 55,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15.0),
                       color: Color.fromARGB(255, 208, 208, 208),
@@ -239,14 +293,14 @@ class _AuthenticationState extends State<Signin> {
                       },
                       child: Image.asset(
                         "assets/apple.png",
-                        height: 30,
-                        width: 30,
+                        height: 23,
+                        width: 23,
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -260,8 +314,7 @@ class _AuthenticationState extends State<Signin> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => Authentication()),
+                          MaterialPageRoute(builder: (context) => UserSignUp()),
                         );
                       },
                       child: RichText(
@@ -271,11 +324,15 @@ class _AuthenticationState extends State<Signin> {
                           children: [
                             TextSpan(
                               text: "Don't have an account? ",
-                              style: TextStyle(fontWeight: FontWeight.normal),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Color.fromARGB(255, 153, 153, 153)),
                             ),
                             TextSpan(
                               text: "Sign Up",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff1152FD)),
                             ),
                           ],
                         ),
@@ -284,11 +341,24 @@ class _AuthenticationState extends State<Signin> {
                   ],
                 ),
               ),
-              Spacer(),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+String? validateEmail(String? formEmail) {
+  if (formEmail == null || formEmail.isEmpty) {
+    return 'E-mail address is required.';
+  }
+  return null;
+}
+
+String? validatePassword(String? formPassword) {
+  if (formPassword == null || formPassword.isEmpty) {
+    return 'Password is required.';
+  }
+  return null;
 }

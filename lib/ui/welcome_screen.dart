@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:notesgpt/ui/authentication.dart';
-import 'sign_in_view.dart';
-import 'sign_up_view.dart';
+import 'package:notesgpt/ui/user_sign_up.dart';
+import 'user_sign_in.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override
@@ -34,7 +33,7 @@ class WelcomeScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Authentication()),
+                MaterialPageRoute(builder: (context) => UserSignUp()),
               );
             },
           ),
@@ -43,7 +42,7 @@ class WelcomeScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Signin()),
+                MaterialPageRoute(builder: (context) => UserSignIn()),
               );
             },
             child: RichText(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:notesgpt/net/snackbars.dart';
 import 'package:notesgpt/ui/user_sign_up.dart';
 import 'package:notesgpt/ui/user_sign_in.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'home_view.dart';
 import 'welcome_screen.dart';
@@ -161,71 +162,86 @@ class _AuthenticationState extends State<UserSignIn> {
                     if (_key.currentState!.validate()) {
                       ScaffoldMessengerState scaffoldMessenger =
                           ScaffoldMessenger.of(context);
-                      bool shouldNavigate =
-                          await register(_emailField.text, _passwordField.text);
-                      scaffoldMessenger
-                          .showSnackBar(
-                            SnackBar(
-                              content: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                // ignore: prefer_const_literals_to_create_immutables
-                                children: <Widget>[
-                                  SizedBox(
-                                    height: 15,
-                                    width: 15,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Color(0xff1152FD)),
-                                      backgroundColor: Colors.white,
-                                      strokeWidth: 3.0,
+                      bool shouldNavigate = false;
+                      String errorMessage = '';
+                      try {
+                        shouldNavigate =
+                            await signIn(_emailField.text, _passwordField.text);
+                      } on LoginException catch (e) {
+                        errorMessage = e.message;
+                      }
+                      // Error message
+                      if (errorMessage.isNotEmpty) {
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              errorMessage,
+                              textAlign: TextAlign.center,
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            width: 300,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        // Loading indicator
+                      } else if (shouldNavigate) {
+                        scaffoldMessenger
+                            .showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 15,
+                                      width: 15,
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Color(0xff1152FD)),
+                                        backgroundColor: Colors.white,
+                                        strokeWidth: 3.0,
+                                      ),
                                     ),
-                                  ),
-                                  Text('  Please wait...',
-                                      style: TextStyle(
-                                          color: Color(0xff1152FD),
-                                          fontWeight: FontWeight.bold))
-                                ],
+                                    Text('',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
+                                backgroundColor: Color(0xff1152FD),
+                                behavior: SnackBarBehavior.floating,
+                                width: 50,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
                               ),
-                              backgroundColor: Colors.white,
-                              behavior: SnackBarBehavior.floating,
-                              width: MediaQuery.of(context).size.width / 1.5,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
+                            )
+                            .closed
+                            .then((SnackBarClosedReason reason) async {
+                          if (shouldNavigate) {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomeView(),
                               ),
-                              // content: Text(
-                              //   'Loading.. please wait',
-                              //   style: TextStyle(color: Colors.white),
-                              //   textAlign: TextAlign.center,
-                              // ),
-                              // behavior: SnackBarBehavior.floating,
-                              // duration: Duration(seconds: 3),
-                              // backgroundColor: Color(0xff1152FD),
-                              // width: MediaQuery.of(context).size.width / 1.8,
-                              // shape: RoundedRectangleBorder(
-                              //   borderRadius: BorderRadius.circular(15.0),
-                              // ),
-                            ),
-                          )
-                          .closed
-                          .then((SnackBarClosedReason reason) async {
-                        if (shouldNavigate) {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomeView(),
-                            ),
-                          );
-                          scaffoldMessenger.hideCurrentSnackBar();
-                        }
-                      });
+                            );
+                            scaffoldMessenger.hideCurrentSnackBar();
+                          }
+                        });
+                      }
                     }
                   },
-                  child: Text("Sign In",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold)),
+                  child: Text(
+                    "Sign In",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
               SizedBox(height: 0),
@@ -347,18 +363,4 @@ class _AuthenticationState extends State<UserSignIn> {
       ),
     );
   }
-}
-
-String? validateEmail(String? formEmail) {
-  if (formEmail == null || formEmail.isEmpty) {
-    return 'E-mail address is required.';
-  }
-  return null;
-}
-
-String? validatePassword(String? formPassword) {
-  if (formPassword == null || formPassword.isEmpty) {
-    return 'Password is required.';
-  }
-  return null;
 }

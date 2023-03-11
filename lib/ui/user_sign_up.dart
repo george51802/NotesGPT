@@ -19,8 +19,27 @@ class _AuthenticationState extends State<UserSignUp> {
   TextEditingController _nameField = TextEditingController();
   TextEditingController _emailField = TextEditingController();
   TextEditingController _passwordField = TextEditingController();
+  TextEditingController _confirmField = TextEditingController();
+
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool passwordsMatch = false;
+
+  // Inside a function that is called when the user confirms their password
+  void verifyPassword() {
+    if (_passwordField.text == _confirmField.text) {
+      // Passwords match, set passwordsMatch to true
+      setState(() {
+        passwordsMatch = true;
+      });
+    } else {
+      // Passwords do not match, set passwordsMatch to false
+      setState(() {
+        passwordsMatch = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,10 +108,10 @@ class _AuthenticationState extends State<UserSignUp> {
                     ),
                     child: TextFormField(
                       style: TextStyle(color: Colors.black), // black text color
-                      controller: _nameField,
-                      validator: validateName,
+                      controller: _emailField,
+                      validator: validateEmail,
                       decoration: InputDecoration(
-                        hintText: "Name",
+                        hintText: "Email",
                         hintStyle: TextStyle(
                             color: Color.fromARGB(255, 145, 145,
                                 145)), // set hint text color to gray
@@ -118,10 +137,11 @@ class _AuthenticationState extends State<UserSignUp> {
                     ),
                     child: TextFormField(
                       style: TextStyle(color: Colors.black), // black text color
-                      controller: _emailField,
-                      validator: validateEmail,
+                      controller: _passwordField,
+                      validator: validatePassword,
+                      obscureText: true,
                       decoration: InputDecoration(
-                        hintText: "Email",
+                        hintText: "Password",
                         hintStyle: TextStyle(
                             color: Color.fromARGB(255, 145, 145,
                                 145)), // set hint text color to gray
@@ -129,6 +149,9 @@ class _AuthenticationState extends State<UserSignUp> {
                             EdgeInsets.fromLTRB(18.0, 5.0, 0.0, 0.0),
                         border: InputBorder.none, // remove underline
                       ),
+                      onChanged: (value) {
+                        verifyPassword();
+                      },
                     ),
                   ),
                 ],
@@ -137,43 +160,82 @@ class _AuthenticationState extends State<UserSignUp> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 330,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(
-                          255, 255, 255, 255), // light gray background
-                      border: Border.all(
-                        color:
-                            Color.fromARGB(255, 221, 221, 221), // gray border
+                  Stack(
+                    children: [
+                      Container(
+                        width: 330,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(
+                              255, 255, 255, 255), // light gray background
+                          border: Border.all(
+                            color: Color.fromARGB(
+                                255, 221, 221, 221), // gray border
+                          ),
+                          borderRadius:
+                              BorderRadius.circular(18.0), // border radius
+                        ),
+                        child: TextFormField(
+                          autovalidateMode: AutovalidateMode.always,
+                          controller: _confirmField,
+                          validator: (String? value) {
+                            if (value!.isEmpty) {
+                              return 'Please confirm your password';
+                            } else if (value != _passwordField.text) {
+                              passwordsMatch = false;
+                              return 'Password does not match';
+                            } else {
+                              passwordsMatch = true;
+                              return null;
+                            }
+                          },
+                          style: TextStyle(
+                              color: Colors.black), // black text color
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            hintText: "Confirm Password",
+                            hintStyle: TextStyle(
+                                color: Color.fromARGB(255, 145, 145,
+                                    145)), // set hint text color to gray
+                            contentPadding:
+                                EdgeInsets.fromLTRB(18.0, 5.0, 0.0, 0.0),
+                            border: InputBorder.none, // remove underline
+                          ),
+                          onChanged: (value) {
+                            verifyPassword();
+                          },
+                        ),
                       ),
-                      borderRadius:
-                          BorderRadius.circular(18.0), // border radius
-                    ),
-                    child: TextFormField(
-                      style: TextStyle(color: Colors.black), // black text color
-                      controller: _passwordField,
-                      validator: (value) {
-                        String? errorMessage = validatePassword(value);
-                        if (errorMessage != null) {
-                          // Show a SnackBar with the error message
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(MySnackBars.passwordSnackBar);
-                        }
-                        return errorMessage;
-                      },
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: "••••••••••••",
-                        hintStyle: TextStyle(
-                            color: Color.fromARGB(255, 145, 145,
-                                145)), // set hint text color to gray
-                        contentPadding:
-                            EdgeInsets.fromLTRB(18.0, 5.0, 0.0, 0.0),
-                        border: InputBorder.none, // remove underline
+                      Positioned(
+                        right: 12,
+                        top: 15,
+                        child: Container(
+                          width: 25,
+                          height: 25,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: passwordsMatch
+                                ? Color(0xff1152FD)
+                                : Colors.white,
+                            border: Border.all(
+                              color: Color.fromARGB(255, 172, 172, 172),
+                            ),
+                          ),
+                          child: passwordsMatch
+                              ? Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 15,
+                                )
+                              : Icon(
+                                  Icons.clear,
+                                  color: Color(0xff1152FD),
+                                  size: 15,
+                                ),
+                        ),
                       ),
-                    ),
-                  ),
+                    ],
+                  )
                 ],
               ),
               SizedBox(height: 25),
@@ -198,64 +260,74 @@ class _AuthenticationState extends State<UserSignUp> {
                     if (_key.currentState!.validate()) {
                       ScaffoldMessengerState scaffoldMessenger =
                           ScaffoldMessenger.of(context);
-                      bool shouldNavigate =
-                          await register(_emailField.text, _passwordField.text);
-                      scaffoldMessenger
-                          .showSnackBar(
-                            SnackBar(
-                              content: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                // ignore: prefer_const_literals_to_create_immutables
-                                children: <Widget>[
-                                  SizedBox(
-                                    height: 15,
-                                    width: 15,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Color(0xff1152FD)),
-                                      backgroundColor: Colors.white,
-                                      strokeWidth: 3.0,
+                      bool shouldNavigate = false;
+                      String errorMessage = '';
+                      try {
+                        shouldNavigate = await register(
+                            _emailField.text, _passwordField.text);
+                      } on RegistrationException catch (e) {
+                        errorMessage = e.message;
+                      }
+                      if (errorMessage.isNotEmpty) {
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              errorMessage,
+                              textAlign: TextAlign.center,
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            width: 300,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else if (shouldNavigate) {
+                        scaffoldMessenger
+                            .showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 15,
+                                      width: 15,
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Color(0xff1152FD)),
+                                        backgroundColor: Colors.white,
+                                        strokeWidth: 3.0,
+                                      ),
                                     ),
-                                  ),
-                                  Text('  Please wait...',
-                                      style: TextStyle(
-                                          color: Color(0xff1152FD),
-                                          fontWeight: FontWeight.bold))
-                                ],
+                                    Text('',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold))
+                                  ],
+                                ),
+                                backgroundColor: Color(0xff1152FD),
+                                behavior: SnackBarBehavior.floating,
+                                width: 50,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
                               ),
-                              backgroundColor: Colors.white,
-                              behavior: SnackBarBehavior.floating,
-                              width: MediaQuery.of(context).size.width / 1.5,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
+                            )
+                            .closed
+                            .then((SnackBarClosedReason reason) async {
+                          if (shouldNavigate) {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomeView(),
                               ),
-                              // content: Text(
-                              //   'Loading.. please wait',
-                              //   style: TextStyle(color: Colors.white),
-                              //   textAlign: TextAlign.center,
-                              // ),
-                              // behavior: SnackBarBehavior.floating,
-                              // duration: Duration(seconds: 3),
-                              // backgroundColor: Color(0xff1152FD),
-                              // width: MediaQuery.of(context).size.width / 1.8,
-                              // shape: RoundedRectangleBorder(
-                              //   borderRadius: BorderRadius.circular(15.0),
-                              // ),
-                            ),
-                          )
-                          .closed
-                          .then((SnackBarClosedReason reason) async {
-                        if (shouldNavigate) {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomeView(),
-                            ),
-                          );
-                          scaffoldMessenger.hideCurrentSnackBar();
-                        }
-                      });
+                            );
+                            scaffoldMessenger.hideCurrentSnackBar();
+                          }
+                        });
+                      }
                     }
                   },
                   child: Text("Sign Up",
@@ -390,20 +462,25 @@ String? validateEmail(String? formEmail) {
   if (formEmail == null || formEmail.isEmpty) {
     return 'E-mail address is required.';
   }
+  if (formEmail != null && !formEmail.contains('@')) {
+    return 'Please enter a valid e-mail address.';
+  }
+  if (formEmail != null && !formEmail.contains('.')) {
+    return 'Please enter a valid e-mail address.';
+  }
   return null;
 }
 
-RegExp pass_valid = RegExp(r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$");
-
 String? validatePassword(String? formPassword) {
   if (formPassword == null || formPassword.isEmpty) {
-    return ' ';
-  } else {
-    String _password = formPassword;
-    if (!pass_valid.hasMatch(_password)) {
-      return ' ';
-    }
+    return 'Password is required.';
   }
+  // if (formPassword.length < 4) {
+  //   return 'Password must be at least 4 characters.';
+  // }
+  // if (formPassword.length > 20) {
+  //   return 'Password must be less than 20 characters.';
+  // }
   return null;
 }
 

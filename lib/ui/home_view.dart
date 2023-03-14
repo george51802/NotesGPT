@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:notesgpt/ui/chatbot_view.dart';
 import 'package:notesgpt/ui/home_view.dart';
 import 'package:notesgpt/ui/settings_view.dart';
+import 'package:notesgpt/ui/welcome_screen.dart';
 
 class HomeController extends GetxController {
   var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -86,7 +88,7 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 45),
                   Container(
                     width: 60 + 16 + MediaQuery.of(context).size.width * 0.8,
                     height: 95,
@@ -186,10 +188,15 @@ class HomeView extends GetView<HomeController> {
             label: 'Documents',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat,
-                color: controller.currentIndex.value == 2
-                    ? Color(0xff1152FD)
-                    : Colors.grey),
+            icon: IconButton(
+              icon: Icon(Icons.chat,
+                  color: controller.currentIndex.value == 2
+                      ? Color(0xff1152FD)
+                      : Colors.grey),
+              onPressed: () {
+                Get.to(() => WelcomeScreen());
+              },
+            ),
             label: 'Chat',
           ),
           BottomNavigationBarItem(

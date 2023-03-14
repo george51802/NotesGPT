@@ -43,6 +43,9 @@ dependencies:
   auth: ^8.2.0+02
   cloud_firestore: ^4.4.3
   get: ^4.6.1 # add this line
+  awesome_snackbar_content: ^0.1.2
+  http: ^0.13.5
+  fluttertoast: ^8.2.1
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +76,8 @@ flutter:
       - assets/google.png
       - assets/noteslogo2.png
       - assets/noteslogo3.png
+      - assets/signup.png
+      - assets/login.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

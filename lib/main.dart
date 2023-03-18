@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'NotesGPT',
-      home: WelcomeScreen(), // Update to use HomeView instead of WelcomeScreen
+      home: AuthService()
+          .handleAuthState(), // Update to use HomeView instead of WelcomeScreen
       routes: {
         '/settings': (context) => UserSettingsView(),
       },

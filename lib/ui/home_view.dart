@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:notesgpt/ui/chatbot_view.dart';
@@ -129,14 +131,18 @@ class HomeView extends GetView<HomeController> {
                     borderRadius: BorderRadius.circular(10),
                     color: Color(0xff1152FD),
                   ),
-                  child: Center(
-                    child: Text(
-                      'View All',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                  child: ElevatedButton(
+                    child: Text('View All'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Color(0xff1152FD), // Change the color here
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(13.0),
                       ),
                     ),
+                    onPressed: () {
+                      // Go to the notes library ui page
+                    },
                   ),
                 ),
               ],
@@ -144,20 +150,32 @@ class HomeView extends GetView<HomeController> {
           ),
           Expanded(
             child: Container(
-              margin: EdgeInsets.only(left: 30, right: 30, top: 20),
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(
-                  10,
-                  (index) => Container(
-                    width: 200,
-                    margin: EdgeInsets.only(right: 20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+              child: Center(
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('Users')
+                        .doc(FirebaseAuth.instance.currentUser?.uid)
+                        .collection('Coins')
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return ListView(
+                        children: snapshot.data!.docs.map((document) {
+                          return Container(
+                              child: Row(
+                            children: [
+                              Text(document.id),
+                              Text("${document.data()['body']}"),
+                            ],
+                          ));
+                        }).toList(),
+                      );
+                    }),
               ),
             ),
           ),

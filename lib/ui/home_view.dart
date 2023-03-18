@@ -155,7 +155,7 @@ class HomeView extends GetView<HomeController> {
                     stream: FirebaseFirestore.instance
                         .collection('Users')
                         .doc(FirebaseAuth.instance.currentUser?.uid)
-                        .collection('Coins')
+                        .collection('Notes')
                         .snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -167,12 +167,13 @@ class HomeView extends GetView<HomeController> {
                       return ListView(
                         children: snapshot.data!.docs.map((document) {
                           return Container(
-                              child: Row(
-                            children: [
-                              Text(document.id),
-                              Text("${document.data()['body']}"),
-                            ],
-                          ));
+                              margin: EdgeInsets.only(top: 20),
+                              child: Column(
+                                children: [
+                                  Text(document.id),
+                                  Text(document.get('Notes')),
+                                ],
+                              ));
                         }).toList(),
                       );
                     }),

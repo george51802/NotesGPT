@@ -14,7 +14,7 @@ class WelcomeScreen extends StatelessWidget {
           Center(
               child:
                   Image.asset('assets/noteslogo.png', width: 250, height: 500)),
-          SizedBox(height: 100),
+          SizedBox(height: 150),
           ElevatedButton(
             child: Text(
               'Create an account',

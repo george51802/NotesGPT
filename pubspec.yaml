@@ -43,9 +43,12 @@ dependencies:
   auth: ^8.2.0+02
   cloud_firestore: ^4.4.3
   get: ^4.6.1 # add this line
-  awesome_snackbar_content: ^0.1.2
   http: ^0.13.5
   fluttertoast: ^8.2.1
+  intl: ^0.17.0
+  provider: ^6.0.1
+  flutter_sound: ^9.2.13
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

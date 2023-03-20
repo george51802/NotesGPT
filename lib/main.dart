@@ -3,9 +3,12 @@ import 'package:notesgpt/net/auth_service.dart';
 import 'package:notesgpt/ui/home_view.dart'; // import HomeView
 import 'package:notesgpt/ui/settings_view.dart';
 import 'package:notesgpt/ui/welcome_screen.dart';
+import 'chatgpt/chat_runner.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // import Get and HomeController
+import 'package:provider/provider.dart';
+import 'package:notesgpt/chatgpt/conversation_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +16,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   Get.put(HomeController()); // Register HomeController with Get
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ConversationProvider(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

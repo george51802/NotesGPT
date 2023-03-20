@@ -4,7 +4,7 @@ import 'package:notesgpt/net/flutterfire.dart';
 import 'package:flutter/material.dart';
 import 'package:notesgpt/net/snackbars.dart';
 import 'package:notesgpt/ui/user_sign_in.dart';
-
+import 'package:get/get.dart';
 import 'home_view.dart';
 import 'welcome_screen.dart';
 
@@ -86,7 +86,7 @@ class _AuthenticationState extends State<UserSignUp> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Create an account",
+                    "createAccount".tr,
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 20,
@@ -111,7 +111,7 @@ class _AuthenticationState extends State<UserSignUp> {
                       controller: _emailField,
                       validator: validateEmail,
                       decoration: InputDecoration(
-                        hintText: "Email",
+                        hintText: "email".tr,
                         hintStyle: TextStyle(
                             color: Color.fromARGB(255, 145, 145,
                                 145)), // set hint text color to gray
@@ -141,7 +141,7 @@ class _AuthenticationState extends State<UserSignUp> {
                       validator: validatePassword,
                       obscureText: true,
                       decoration: InputDecoration(
-                        hintText: "Password",
+                        hintText: "password".tr,
                         hintStyle: TextStyle(
                             color: Color.fromARGB(255, 145, 145,
                                 145)), // set hint text color to gray
@@ -180,10 +180,10 @@ class _AuthenticationState extends State<UserSignUp> {
                           controller: _confirmField,
                           validator: (String? value) {
                             if (value!.isEmpty) {
-                              return 'Please confirm your password';
+                              return 'confirmPasswordMessage'.tr;
                             } else if (value != _passwordField.text) {
                               passwordsMatch = false;
-                              return 'Password does not match';
+                              return 'passwordNotMatch'.tr;
                             } else {
                               passwordsMatch = true;
                               return null;
@@ -193,7 +193,7 @@ class _AuthenticationState extends State<UserSignUp> {
                               color: Colors.black), // black text color
                           obscureText: true,
                           decoration: InputDecoration(
-                            hintText: "Confirm Password",
+                            hintText: "confirmPassword".tr,
                             hintStyle: TextStyle(
                                 color: Color.fromARGB(255, 145, 145,
                                     145)), // set hint text color to gray
@@ -330,7 +330,7 @@ class _AuthenticationState extends State<UserSignUp> {
                       }
                     }
                   },
-                  child: Text("Sign Up",
+                  child: Text("signUp".tr,
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.0,
@@ -350,7 +350,7 @@ class _AuthenticationState extends State<UserSignUp> {
                       ),
                     ),
                     SizedBox(width: 30),
-                    Text("Or sign up with"),
+                    Text("orSignUpWith".tr),
                     SizedBox(width: 30),
                     Expanded(
                       child: Divider(
@@ -432,13 +432,13 @@ class _AuthenticationState extends State<UserSignUp> {
                               TextStyle(color: Color.fromARGB(255, 66, 66, 66)),
                           children: [
                             TextSpan(
-                              text: "Already have an account? ",
+                              text: "alreadyHaveAccount".tr,
                               style: TextStyle(
                                   fontWeight: FontWeight.normal,
                                   color: Color.fromARGB(255, 153, 153, 153)),
                             ),
                             TextSpan(
-                              text: "Sign in",
+                              text: "signIn".tr,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xff1152FD)),
@@ -460,20 +460,20 @@ class _AuthenticationState extends State<UserSignUp> {
 
 String? validateEmail(String? formEmail) {
   if (formEmail == null || formEmail.isEmpty) {
-    return 'E-mail address is required.';
+    return 'emailRequired'.tr;
   }
   if (formEmail != null && !formEmail.contains('@')) {
-    return 'Please enter a valid e-mail address.';
+    return 'emailInvalid'.tr;
   }
   if (formEmail != null && !formEmail.contains('.')) {
-    return 'Please enter a valid e-mail address.';
+    return 'email.Invalid'.tr;
   }
   return null;
 }
 
 String? validatePassword(String? formPassword) {
   if (formPassword == null || formPassword.isEmpty) {
-    return 'Password is required.';
+    return 'passwordRequired'.tr;
   }
   // if (formPassword.length < 4) {
   //   return 'Password must be at least 4 characters.';
@@ -486,7 +486,7 @@ String? validatePassword(String? formPassword) {
 
 String? validateName(String? formName) {
   if (formName == null || formName.isEmpty) {
-    return 'Name is required.';
+    return 'nameRequired'.tr;
   }
   return null;
 }

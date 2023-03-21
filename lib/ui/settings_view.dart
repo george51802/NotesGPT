@@ -1,15 +1,82 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notesgpt/net/auth_service.dart';
+import 'package:notesgpt/ui/edit_profile_view.dart';
 import 'package:notesgpt/ui/welcome_screen.dart';
+import 'package:get/get.dart';
 
-class UserSettingsView extends StatelessWidget {
+class UserSettingsView extends StatefulWidget {
+  @override
+  _UserSettingsViewState createState() => _UserSettingsViewState();
+}
+
+class _UserSettingsViewState extends State<UserSettingsView> {
   final authService = AuthService();
+
+  late User _user;
+  late String _displayName;
+
+  @override
+  void initState() {
+    super.initState();
+    _user = FirebaseAuth.instance.currentUser!;
+    _displayName = _user.displayName ?? 'User';
+  }
+
+  updateName(String name) {
+    setState(() {
+      _displayName = name;
+    });
+  }
+
+  final List locale = [
+    {'name': 'English', 'locale': Locale('en', 'US')},
+    {'name': 'हिंदी', 'locale': Locale('hi', 'IN')},
+    {'name': 'Español', 'locale': Locale('es', 'SP')}
+  ];
+
+  updateLanguage(Locale locale) {
+    Get.back();
+    Get.updateLocale(locale);
+  }
+
+  builddialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            title: Text('Choose a language'),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: ListView.separated(
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                          onTap: () {
+                            print(locale[index]['name']);
+                            updateLanguage(locale[index]['locale']);
+                          },
+                          child: Text(locale[index]['name'])),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return Divider(
+                      color: Colors.blue,
+                    );
+                  },
+                  itemCount: locale.length),
+            ),
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final email = user?.email ?? 'User';
+    final displayName = user?.displayName ?? 'User';
 
     return Scaffold(
       appBar: AppBar(
@@ -18,7 +85,7 @@ class UserSettingsView extends StatelessWidget {
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text('Settings'),
+        title: Text('settings'.tr),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -27,7 +94,7 @@ class UserSettingsView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              'Hello, $email!',
+              '${'hello'.tr}$_displayName!',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -37,22 +104,36 @@ class UserSettingsView extends StatelessWidget {
           Divider(thickness: 1, height: 30),
           ListTile(
             leading: Icon(Icons.person),
-            title: Text('Edit Profile'),
-            onTap: () {},
+            title: Text('editProfile'.tr),
+            onTap: () async {
+              final newName = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditProfileScreen(
+                    currentName: _displayName,
+                  ),
+                ),
+              );
+              if (newName != null) {
+                updateName(newName);
+              }
+            },
           ),
           ListTile(
             leading: Icon(Icons.lock),
-            title: Text('Change Password'),
+            title: Text('changePassword'.tr),
             onTap: () {},
           ),
           ListTile(
             leading: Icon(Icons.language),
-            title: Text('Change Language'),
-            onTap: () {},
+            title: Text('changeLanguage'.tr),
+            onTap: () {
+              builddialog(context);
+            },
           ),
           ListTile(
             leading: Icon(Icons.settings),
-            title: Text('Change ChatGPT Model'),
+            title: Text('changeModel'.tr),
             onTap: () {},
           ),
           Expanded(child: Container()),
@@ -60,7 +141,7 @@ class UserSettingsView extends StatelessWidget {
             child: Container(
               margin: EdgeInsets.all(40),
               child: ElevatedButton(
-                child: Text('Sign Out'),
+                child: Text('signOut'.tr),
                 style: ElevatedButton.styleFrom(
                   primary: Color(0xff1152FD), // Change the color here
                   shape: RoundedRectangleBorder(

@@ -41,15 +41,17 @@ class _AuthenticationState extends State<UserSignIn> {
         toolbarHeight: 250,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(40.0),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0),
+          child: Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
+                ),
+                color: Colors.white,
               ),
-              color: Colors.white,
+              height: 30.0,
             ),
-            height: 30.0,
           ),
         ),
       ),

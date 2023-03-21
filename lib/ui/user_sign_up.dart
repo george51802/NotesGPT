@@ -3,7 +3,7 @@ import 'package:notesgpt/net/auth_service.dart';
 import 'package:notesgpt/net/flutterfire.dart';
 import 'package:flutter/material.dart';
 import 'package:notesgpt/ui/user_sign_in.dart';
-
+import 'package:get/get.dart';
 import 'home_view.dart';
 import 'welcome_screen.dart';
 
@@ -71,42 +71,54 @@ class _AuthenticationState extends State<UserSignUp> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Form(
-          key: _key,
-          child: Container(
-            //width: double.infinity,
-            //height: MediaQuery.of(context).size.height / 1.3,
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                SizedBox(height: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Create an account",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
+      body: Form(
+        key: _key,
+        child: Container(
+          //width: double.infinity,
+          //height: MediaQuery.of(context).size.height / 1.3,
+          decoration: BoxDecoration(
+            color: Colors.white,
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              SizedBox(height: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "createAccount".tr,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                    width: 330,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(
+                          255, 255, 255, 255), // light gray background
+                      border: Border.all(
+                        color:
+                            Color.fromARGB(255, 221, 221, 221), // gray border
+                      ),
+                      borderRadius:
+                          BorderRadius.circular(18.0), // border radius
                     ),
-                    SizedBox(height: 20),
-                    Container(
-                      width: 330,
-                      height: 55,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(
-                            255, 255, 255, 255), // light gray background
-                        border: Border.all(
-                          color:
-                              Color.fromARGB(255, 221, 221, 221), // gray border
-                        ),
-                        borderRadius:
-                            BorderRadius.circular(18.0), // border radius
+                    child: TextFormField(
+                      style: TextStyle(color: Colors.black), // black text color
+                      controller: _emailField,
+                      validator: validateEmail,
+                      decoration: InputDecoration(
+                        hintText: "email".tr,
+                        hintStyle: TextStyle(
+                            color: Color.fromARGB(255, 145, 145,
+                                145)), // set hint text color to gray
+                        contentPadding:
+                            EdgeInsets.fromLTRB(18.0, 5.0, 0.0, 0.0),
+                        border: InputBorder.none, // remove underline
                       ),
                       child: TextFormField(
                         style:
@@ -124,38 +136,19 @@ class _AuthenticationState extends State<UserSignUp> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Container(
-                      width: 330,
-                      height: 55,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(
-                            255, 255, 255, 255), // light gray background
-                        border: Border.all(
-                          color:
-                              Color.fromARGB(255, 221, 221, 221), // gray border
-                        ),
-                        borderRadius:
-                            BorderRadius.circular(18.0), // border radius
-                      ),
-                      child: TextFormField(
-                        style:
-                            TextStyle(color: Colors.black), // black text color
-                        controller: _passwordField,
-                        validator: validatePassword,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: "Password",
-                          hintStyle: TextStyle(
-                              color: Color.fromARGB(255, 145, 145,
-                                  145)), // set hint text color to gray
-                          contentPadding:
-                              EdgeInsets.fromLTRB(18.0, 5.0, 0.0, 0.0),
-                          border: InputBorder.none, // remove underline
-                        ),
-                        onChanged: (value) {
-                          verifyPassword();
-                        },
+                    child: TextFormField(
+                      style: TextStyle(color: Colors.black), // black text color
+                      controller: _passwordField,
+                      validator: validatePassword,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: "password".tr,
+                        hintStyle: TextStyle(
+                            color: Color.fromARGB(255, 145, 145,
+                                145)), // set hint text color to gray
+                        contentPadding:
+                            EdgeInsets.fromLTRB(18.0, 5.0, 0.0, 0.0),
+                        border: InputBorder.none, // remove underline
                       ),
                     ),
                   ],
@@ -179,34 +172,34 @@ class _AuthenticationState extends State<UserSignUp> {
                             borderRadius:
                                 BorderRadius.circular(18.0), // border radius
                           ),
-                          child: TextFormField(
-                            autovalidateMode: AutovalidateMode.always,
-                            controller: _confirmField,
-                            validator: (String? value) {
-                              if (value!.isEmpty && _passwordField.text != '') {
-                                return 'Please confirm your password';
-                              } else if (value != _passwordField.text) {
-                                passwordsMatch = false;
-                                return 'Password does not match';
-                              } else {
-                                return null;
-                              }
-                            },
-                            style: TextStyle(
-                                color: Colors.black), // black text color
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              hintText: "Confirm Password",
-                              hintStyle: TextStyle(
-                                  color: Color.fromARGB(255, 145, 145,
-                                      145)), // set hint text color to gray
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(18.0, 5.0, 0.0, 0.0),
-                              border: InputBorder.none, // remove underline
-                            ),
-                            onChanged: (value) {
-                              verifyPassword();
-                            },
+                        borderRadius:
+                              BorderRadius.circular(18.0), // border radius
+                        ),
+                        child: TextFormField(
+                          autovalidateMode: AutovalidateMode.always,
+                          controller: _confirmField,
+                          validator: (String? value) {
+                            if (value!.isEmpty) {
+                              return 'confirmPasswordMessage'.tr;
+                            } else if (value != _passwordField.text) {
+                              passwordsMatch = false;
+                              return 'passwordNotMatch'.tr;
+                            } else {
+                              passwordsMatch = true;
+                              return null;
+                            }
+                          },
+                          style: TextStyle(
+                              color: Colors.black), // black text color
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            hintText: "confirmPassword".tr,
+                            hintStyle: TextStyle(
+                                color: Color.fromARGB(255, 145, 145,
+                                    145)), // set hint text color to gray
+                            contentPadding:
+                                EdgeInsets.fromLTRB(18.0, 5.0, 0.0, 0.0),
+                            border: InputBorder.none, // remove underline
                           ),
                         ),
                         Positioned(
@@ -332,13 +325,13 @@ class _AuthenticationState extends State<UserSignUp> {
                           });
                         }
                       }
-                    },
-                    child: Text("Sign Up",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold)),
-                  ),
+                    }
+                  },
+                  child: Text("signUp".tr,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold)),
                 ),
                 SizedBox(height: 0),
                 Container(
@@ -374,25 +367,14 @@ class _AuthenticationState extends State<UserSignUp> {
                         borderRadius: BorderRadius.circular(15.0),
                         color: Color.fromARGB(255, 208, 208, 208),
                       ),
-                      child: TextButton(
-                        onPressed: () async {
-                          try {
-                            await AuthService().signInWithGoogle();
-                          } catch (e) {
-                            print(e);
-                          }
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => HomeView(),
-                          //   ),
-                          // );
-                        },
-                        child: Image.asset(
-                          "assets/google.png",
-                          height: 23,
-                          width: 23,
-                        ),
+                    ),
+                    SizedBox(width: 30),
+                    Text("orSignUpWith".tr),
+                    SizedBox(width: 30),
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey,
+                        thickness: 0.3,
                       ),
                     ),
                     SizedBox(width: 20),
@@ -416,43 +398,34 @@ class _AuthenticationState extends State<UserSignUp> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.0),
-                    color: Colors.white,
-                  ),
-                  child: Column(
-                    children: [
-                      //SizedBox(height: 10),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UserSignIn()),
-                          );
-                        },
-                        child: RichText(
-                          text: TextSpan(
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 66, 66, 66)),
-                            children: [
-                              TextSpan(
-                                text: "Already have an account? ",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    color: Color.fromARGB(255, 153, 153, 153)),
-                              ),
-                              TextSpan(
-                                text: "Sign in",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xff1152FD)),
-                              ),
-                            ],
-                          ),
+                child: Column(
+                  children: [
+                    //SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => UserSignIn()),
+                        );
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                          style:
+                              TextStyle(color: Color.fromARGB(255, 66, 66, 66)),
+                          children: [
+                            TextSpan(
+                              text: "alreadyHaveAccount".tr,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Color.fromARGB(255, 153, 153, 153)),
+                            ),
+                            TextSpan(
+                              text: "signIn".tr,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff1152FD)),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -469,20 +442,20 @@ class _AuthenticationState extends State<UserSignUp> {
 
 String? validateEmail(String? formEmail) {
   if (formEmail == null || formEmail.isEmpty) {
-    return 'E-mail address is required.';
+    return 'emailRequired'.tr;
   }
   if (formEmail != null && !formEmail.contains('@')) {
-    return 'Please enter a valid e-mail address.';
+    return 'emailInvalid'.tr;
   }
   if (formEmail != null && !formEmail.contains('.')) {
-    return 'Please enter a valid e-mail address.';
+    return 'email.Invalid'.tr;
   }
   return null;
 }
 
 String? validatePassword(String? formPassword) {
   if (formPassword == null || formPassword.isEmpty) {
-    return 'Password is required.';
+    return 'passwordRequired'.tr;
   }
   // if (formPassword.length < 4) {
   //   return 'Password must be at least 4 characters.';
@@ -495,7 +468,7 @@ String? validatePassword(String? formPassword) {
 
 String? validateName(String? formName) {
   if (formName == null || formName.isEmpty) {
-    return 'Name is required.';
+    return 'nameRequired'.tr;
   }
   return null;
 }

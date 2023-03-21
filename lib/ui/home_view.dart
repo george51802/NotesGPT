@@ -90,19 +90,21 @@ class HomeView extends GetView<HomeController> {
                     ],
                   ),
                   SizedBox(height: 45),
-                  Container(
-                    width: 60 + 16 + MediaQuery.of(context).size.width * 0.8,
-                    height: 95,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'ChatBot',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Container(
+                      width: 60 + 16 + MediaQuery.of(context).size.width * 0.8,
+                      height: 95,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'ChatBot',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),

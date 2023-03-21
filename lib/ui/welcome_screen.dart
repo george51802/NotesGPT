@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notesgpt/ui/user_sign_up.dart';
 import 'user_sign_in.dart';
+import 'package:get/get.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override
@@ -17,7 +18,7 @@ class WelcomeScreen extends StatelessWidget {
           SizedBox(height: 150),
           ElevatedButton(
             child: Text(
-              'Create an account',
+              'createAccount'.tr,
               style: TextStyle(
                 color: Color(0xff1152FD),
                 fontWeight: FontWeight.w800,
@@ -50,11 +51,11 @@ class WelcomeScreen extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
                 children: [
                   TextSpan(
-                    text: "Already have an account? ",
+                    text: 'alreadyHaveAccount'.tr,
                     style: TextStyle(fontWeight: FontWeight.normal),
                   ),
                   TextSpan(
-                    text: "Sign in",
+                    text: 'signIn'.tr,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],

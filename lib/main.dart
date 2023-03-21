@@ -6,6 +6,7 @@ import 'package:notesgpt/ui/settings_view.dart';
 import 'package:notesgpt/ui/user_sign_in.dart';
 import 'package:notesgpt/ui/user_sign_up.dart';
 import 'package:notesgpt/ui/welcome_screen.dart';
+import 'chatgpt/chat_runner.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // import Get and HomeController
@@ -17,7 +18,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   Get.put(HomeController()); // Register HomeController with Get
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ConversationProvider(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

@@ -12,12 +12,10 @@ class WelcomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Add your app logo here
-          Flexible(
-            child: Center(
-                child: Image.asset('assets/noteslogo.png',
-                    width: 250, height: 500)),
-          ),
-          SizedBox(height: 100),
+          Center(
+              child:
+                  Image.asset('assets/noteslogo.png', width: 250, height: 500)),
+          SizedBox(height: 150),
           ElevatedButton(
             child: Text(
               'createAccount'.tr,

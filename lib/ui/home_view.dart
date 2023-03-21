@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:notesgpt/ui/chatbot_view.dart';
+import 'package:notesgpt/chatgpt/chat_runner.dart';
+import 'package:notesgpt/chatgpt/chatpage.dart';
 import 'package:notesgpt/ui/home_view.dart';
 import 'package:notesgpt/ui/settings_view.dart';
 import 'package:notesgpt/ui/welcome_screen.dart';
@@ -196,7 +197,7 @@ class HomeView extends GetView<HomeController> {
                       ? Color(0xff1152FD)
                       : Colors.grey),
               onPressed: () {
-                Get.to(() => WelcomeScreen());
+                Get.to(() => ChatBotRunner());
               },
             ),
             label: 'Chat',

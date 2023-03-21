@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:notesgpt/net/auth_service.dart';
+import 'package:notesgpt/net/flutterfire.dart';
 import 'package:notesgpt/ui/home_view.dart'; // import HomeView
 import 'package:notesgpt/ui/settings_view.dart';
+import 'package:notesgpt/ui/user_sign_in.dart';
 import 'package:notesgpt/ui/user_sign_up.dart';
 import 'package:notesgpt/ui/welcome_screen.dart';
 import 'firebase_options.dart';
@@ -27,7 +29,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'NotesGPT',
       home:
-          UserSettingsView(), // Update to use HomeView instead of WelcomeScreen
+          WelcomeScreen(), // Update to use HomeView instead of WelcomeScreen
       routes: {
         '/settings': (context) => UserSettingsView(),
       },

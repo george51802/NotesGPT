@@ -1,9 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_sound/flutter_sound.dart';
-import 'package:permission_handler/permission_handler.dart';
-
 import 'models.dart';
 
 class ConversationProvider extends ChangeNotifier {
@@ -44,7 +43,7 @@ class ConversationProvider extends ChangeNotifier {
 
   // initialize provider conversation list
   ConversationProvider() {
-    _conversations.add(Conversation(messages: [], title: 'new conversation'));
+    _conversations.add(Conversation(messages: [], title: 'New Conversation'));
   }
 
   // change conversations
@@ -74,7 +73,7 @@ class ConversationProvider extends ChangeNotifier {
   // default title is 'new conversation ${_conversations.length}'
   void addEmptyConversation(String title) {
     if (title == '') {
-      title = 'new conversation ${_conversations.length}';
+      title = 'New Conversation ${_conversations.length}';
     }
     _conversations.add(Conversation(messages: [], title: title));
     _currentConversationIndex = _conversations.length - 1;

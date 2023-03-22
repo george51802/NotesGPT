@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:notesgpt/ui/user_forgot_pass.dart';
 import 'package:notesgpt/ui/user_sign_up.dart';
 import 'package:notesgpt/ui/user_sign_in.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'home_view.dart';
 import 'welcome_screen.dart';

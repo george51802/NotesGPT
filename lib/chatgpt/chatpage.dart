@@ -2,11 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:notesgpt/ui/home_view.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
+import '../ui/notes_library.dart';
+import '../ui/settings_view.dart';
 import 'models.dart';
 import 'conversation_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:notesgpt/ui/navigation_bar.dart';
+import 'chat_runner.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -35,7 +40,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<Message?> _sendMessage(List<Map<String, String>> messages) async {
     final url = Uri.parse('https://api.openai.com/v1/chat/completions');
-    final apiKey = "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";
+    final apiKey = "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";
     final proxy =
         Provider.of<ConversationProvider>(context, listen: false).yourproxy;
     final converter = JsonUtf8Encoder();
@@ -135,7 +140,7 @@ class _ChatPageState extends State<ChatPage> {
       onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Color.fromARGB(255, 228, 228, 228),
-        // resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: false,
         body: Column(
           children: [
             Expanded(
@@ -271,6 +276,52 @@ class _ChatPageState extends State<ChatPage> {
                 ],
               ),
             ),
+            CustomNavigationBar(
+              selectedIndex: 2,
+              onTabChange: (index) {
+                // ChatBot Page
+                if (index == 2) {
+                  // Assuming ChatBot button is at index 2
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatBotRunner(),
+                    ),
+                  );
+                }
+                // Notes Library Page
+                else if (index == 1) {
+                  // Assuming Notes Library button is at index 1
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NotesLibrary(),
+                    ),
+                  );
+                }
+                // Profile Page
+                else if (index == 3) {
+                  // Assuming Profile button is at index 3
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserSettingsView(),
+                    ),
+                  );
+                }
+                // Home Page
+                else {
+                  // Assuming Home button is at index 0
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeView(),
+                    ),
+                  );
+                }
+              },
+            ),
+            SizedBox(height: 20),
           ],
         ),
       ),

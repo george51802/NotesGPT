@@ -44,6 +44,7 @@ class MyDrawer extends StatelessWidget {
                 ),
               ),
             ),
+            // list of conversations
             Expanded(
               child: Consumer<ConversationProvider>(
                 builder: (context, conversationProvider, child) {
@@ -107,44 +108,6 @@ class MyDrawer extends StatelessWidget {
                     },
                   );
                 },
-              ),
-            ),
-            // add a setting button at the end of the drawer
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 14.0),
-              color: Colors.white,
-              child: GestureDetector(
-                onTap: () {
-                  //showProxyDialog(context);
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeView()),
-                        );
-                      },
-                      child: Row(
-                        children: [
-                          Icon(Icons.arrow_back,
-                              color: Colors.grey[700], size: 20.0),
-                          const SizedBox(width: 15.0),
-                          Text(
-                            'Go back',
-                            style: TextStyle(
-                              fontFamily: 'din-regular',
-                              color: Colors.grey[700],
-                              fontSize: 18.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
               ),
             ),
           ],

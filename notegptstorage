@@ -1,0 +1,117 @@
+import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+
+class notegptstorage extends StatefulWidget {
+  const notegptstorage({Key? key}) : super(key: key);
+
+  @override
+  _NoteTakingAppState createState() => _NoteTakingAppState();
+}
+
+class _NoteTakingAppState extends State<notegptstorage> {
+  late TextEditingController _textEditingController;
+  late List<Map<String, dynamic>> _notes;
+
+  @override
+  void initState() {
+    super.initState();
+    _textEditingController = TextEditingController();
+    _loadNotesFromDatabase();
+  }
+
+  void _loadNotesFromDatabase() async {
+    Database database = await openDatabase(
+      join(await getDatabasesPath(), 'notes_database.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE notes(id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT)',
+        );
+      },
+      version: 1,
+    );
+
+    final List<Map<String, dynamic>> notes = await database.query('notes');
+    setState(() {
+      _notes = notes;
+    });
+  }
+
+  void _saveNoteToDatabase(String note) async {
+    Database database = await openDatabase(
+      join(await getDatabasesPath(), 'notes_database.db'),
+      version: 1,
+    );
+
+    await database.insert(
+      'notes',
+      {'note': note},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    _loadNotesFromDatabase();
+  }
+
+  void _deleteNoteFromDatabase(int id) async {
+    Database database = await openDatabase(
+      join(await getDatabasesPath(), 'notes_database.db'),
+      version: 1,
+    );
+
+    await database.delete(
+      'notes',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    _loadNotesFromDatabase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Note Taking App'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: _notes.length,
+                itemBuilder: (context, index) {
+                  final Map<String, dynamic> note = _notes[index];
+                  return ListTile(
+                    title: Text(note['note']),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        _deleteNoteFromDatabase(note['id']);
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            TextField(
+              controller: _textEditingController,
+              decoration: InputDecoration(
+                hintText: 'Enter note',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                String note = _textEditingController.text;
+                _saveNoteToDatabase(note);
+                _textEditingController.clear();
+              },
+              child: Text('Save'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

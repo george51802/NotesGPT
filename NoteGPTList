@@ -1,0 +1,76 @@
+class NoteGPTList extends StatelessWidget {
+  final NoteRepository noteRepository;
+
+  NoteGPTList({required this.noteRepository});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Notes'),
+      ),
+      body: FutureBuilder<List<Note>>(
+        future: noteRepository.getNotes(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final notes = snapshot.data!;
+            return ListView.builder(
+              itemCount: notes.length,
+              itemBuilder: (context, index) {
+                final note = notes[index];
+                return ListTile(
+                  title: Text(note.title),
+                  subtitle: Text(note.content),
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NoteFormScreen(
+                noteRepository: noteRepository,
+              ),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class NoteFormScreen extends StatefulWidget {
+  final NoteRepository noteRepository;
+
+  NoteFormScreen({required this.noteRepository});
+
+  @override
+  _NoteFormScreenState createState() => _NoteFormScreenState();
+}
+
+class _NoteFormScreenState extends State<NoteFormScreen> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _titleController;
+  late final TextEditingController _contentController;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController();
+    _contentController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();

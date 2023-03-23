@@ -1,0 +1,23 @@
+class NoteGPTRepository implements NoteRepository {
+  final Database database;
+
+  NoteGPTRepository(this.database);
+
+  @override
+  Future<List<Note>> getNotes() async {
+    final result = await database.query('notes');
+    return result.map((note) => Note.fromMap(note)).toList();
+  }
+
+  @override
+  Future<Note> addOrUpdateNote(Note note) async {
+    await database.insert('notes', note.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return note;
+  }
+
+  @override
+  Future<void> deleteNote(Note note) async {
+    await database.delete('notes', where: 'id = ?', whereArgs: [note.id]);
+  }
+}

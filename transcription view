@@ -1,0 +1,56 @@
+import 'package:flutter/material.dart';
+
+class transcriptionviewnotegptpr extends StatefulWidget {
+  const transcriptionviewnotegptpr({Key? key}) : super(key: key);
+
+  @override
+  _NoteGPTPR createState() => _NoteGPTPR();
+}
+
+class _NoteGPTPR extends State<transcriptionviewnotegptpr> {
+  TextEditingController _textEditingController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Transcription View NoteGPT'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _textEditingController,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                decoration: InputDecoration(
+                  hintText: 'Enter transcription',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // TODO: Implement saving functionality
+                  },
+                  child: Text('Save'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _textEditingController.clear();
+                  },
+                  child: Text('Clear'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

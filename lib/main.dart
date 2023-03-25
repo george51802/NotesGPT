@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // import Get and HomeController
 import 'package:provider/provider.dart';
 import 'package:notesgpt/chatgpt/conversation_provider.dart';
+import 'translations/local_string.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,10 +32,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      translations: LocalString(),
+      locale: Locale('en', 'US'),
       debugShowCheckedModeBanner: false,
       title: 'NotesGPT',
-      home: AuthService()
-          .handleAuthState(), // Update to use HomeView instead of WelcomeScreen
+      home:
+      AuthService()
+        .handleAuthState(), // Update to use HomeView instead of WelcomeScreen
       routes: {
         '/settings': (context) => UserSettingsView(),
         '/chat': (context) => ChatBotRunner(),

@@ -138,7 +138,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
             onTap: () {},
           ),
           ListTile(
-            leading: Icon(Icons.money),
+            leading: Icon(Icons.account_balance_wallet),
             title: Text('Manage Subscription'.tr),
             onTap: () {
               Navigator.push(

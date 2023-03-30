@@ -7,23 +7,23 @@ class ManageSubscriptionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xff1152FD),
         title: Text('Manage Subscription'),
       ),
-      body: Center(
-        child: ElevatedButton(
-          child: Text('Manage Subscription'),
-          onPressed: () {
-            // Add code here to manage subscription
-          },
-        ),
+      body: Column(
+        children: [
+          ListTile(
+            leading: Icon(Icons.cancel),
+            title: Text('Unsubscribe'),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(Icons.upgrade),
+            title: Text('Upgrade Subscription'),
+            onTap: () {},
+          )
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.arrow_back),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat, 
     );
   }
 }

@@ -1,0 +1,77 @@
+import 'package:get/get.dart';
+
+class LocalString extends Translations {
+  @override
+  Map<String, Map<String, String>> get keys => {
+        'en_US': {
+          'signOut': 'Sign Out',
+          'editProfile': 'Edit Profile',
+          'changeLanguage': 'Change Language',
+          'settings': 'Settings',
+          'hello': 'Hello ',
+          'changePassword': 'Change Password',
+          'changeModel': 'Change ChatGPT Model',
+          'createAccount': 'Create an account',
+          'alreadyHaveAccount': 'Already have an account? ',
+          'signIn': 'Sign In',
+          'email': 'Email',
+          'password': 'Password',
+          'confirmPasswordMessage': 'Please confirm your password',
+          'passwordNotMatch': 'Password does not match',
+          'confirmPassword': "Confirm Password",
+          'signUp': 'Sign Up',
+          'orSignUpWith': 'Or sign up with',
+          'emailRequired': 'Email address is required.',
+          'emailInvalid': 'Please enter a valid email address.',
+          'passwordRequired': 'Password is required.',
+          'nameRequired': 'Name is required.'
+        },
+        'hi_IN': {
+          'signOut': 'साइन आउट',
+          'editProfile': 'प्रोफ़ाइल संपादित करें',
+          'changeLanguage': 'भाषा बदलें',
+          'settings': 'समायोजन',
+          'hello': 'नमस्ते ',
+          'changePassword': 'पासवर्ड बदलें',
+          'changeModel': 'चैटजीपीटी मॉडल बदलें',
+          'createAccount': 'खाता बनाएं',
+          'alreadyHaveAccount': 'क्या आपके पास पहले से एक खाता मौजूद है? ',
+          'signIn': 'दाखिल करना',
+          'email': 'ईमेल',
+          'password': 'पासवर्ड',
+          'confirmPasswordMessage': 'कृपया अपने पासवर्ड की पुष्टि करें',
+          'passwordNotMatch': 'पासवर्ड मैच नहीं कर रहा है',
+          'confirmPassword': "पासवर्ड की पुष्टि कीजिये",
+          'signUp': 'साइन अप करें',
+          'orSignUpWith': 'या साथ साइन अप करें',
+          'emailRequired': 'ईमेल पते की ज़रुरत है।',
+          'emailInvalid': 'कृपया एक मान्य ईमेल पता प्रविष्ट करें।',
+          'passwordRequired': 'पासवर्ड की आवश्यकता है।',
+          'nameRequired': 'नाम आवश्यक है।',
+        },
+        'es_SP': {
+          'signOut': 'Desconectar',
+          'editProfile': 'Editar perfil',
+          'changeLanguage': 'Cambiar idioma',
+          'settings': 'Ajustes',
+          'hello': 'Hola ',
+          'changePassword': 'Cambiar la contraseña',
+          'changeModel': 'Cambiar el modelo de ChatGPT',
+          'createAccount': 'Crea una cuenta',
+          'alreadyHaveAccount': '¿Ya tienes una cuenta? ',
+          'signIn': 'Iniciar sesión',
+          'email': 'Correo electrónico',
+          'password': 'Contraseña',
+          'confirmPasswordMessage': 'Por favor, confirme su contraseña',
+          'passwordNotMatch': 'Las contraseñas no coinciden',
+          'confirmPassword': "Confirmar Contraseña",
+          'signUp': 'Inscribirse',
+          'orSignUpWith': 'O regístrate con',
+          'emailRequired': 'Se requiere Dirección de correo electrónico.',
+          'emailInvalid':
+              'Por favor, introduce una dirección de correo electrónico válida.',
+          'passwordRequired': 'se requiere contraseña.',
+          'nameRequired': 'Se requiere el nombre.'
+        }
+      };
+}

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase/firebase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'navigation_bar.dart';
 import 'home_view.dart';
 import 'package:cupertino_icons/cupertino_icons.dart';
 import 'package:file_picker/file_picker.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class NotesLibrary extends StatefulWidget {
   @override
@@ -16,6 +19,10 @@ class _NotesLibraryState extends State<NotesLibrary> {
   TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   bool _showSnackBar = false;
+
+  Reference? _fileReference;
+  File? _selectedFile;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -54,18 +61,37 @@ class _NotesLibraryState extends State<NotesLibrary> {
               SizedBox(width: 50),
               ElevatedButton.icon(
                   onPressed: () async {
+                    setState(() {
+                      _isLoading = true;
+                    });
                     FilePickerResult? result =
                         await FilePicker.platform.pickFiles();
                     if (result != null) {
                       PlatformFile file = result.files.first;
-                      print(file.path);
+                      setState(() {
+                        _selectedFile = File(file.path!);
+                      });
+
+                      //Upload the file to cloud storage
+                      String fileName = _selectedFile!.path.split('/').last;
+                      Reference storageRef =
+                          FirebaseStorage.instance.ref().child(fileName);
+                      await storageRef.putFile(_selectedFile!);
+                      setState(() {
+                        _fileReference = storageRef;
+                        _isLoading = false;
+                      });
                     }
                   },
-                  label: Text('Upload File'),
+                  label: _isLoading ? SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(),
+                  ): Text('Pick a file'),
                   icon: Icon(Icons.file_upload),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey,
-                  ))
+                  )),
             ],
           ),
           bottom: PreferredSize(

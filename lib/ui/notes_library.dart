@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'navigation_bar.dart';
 import 'home_view.dart';
 import 'package:cupertino_icons/cupertino_icons.dart';
+import 'package:file_picker/file_picker.dart';
 
 class NotesLibrary extends StatefulWidget {
   @override
@@ -43,13 +44,28 @@ class _NotesLibraryState extends State<NotesLibrary> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xff1152FD),
+          backgroundColor: Color(0xFF1152FD),
           title: Row(
             children: [
               Text(
                 'Notes Library',
                 style: TextStyle(fontSize: 20, color: Colors.white),
               ),
+              SizedBox(width: 50),
+              ElevatedButton.icon(
+                  onPressed: () async {
+                    FilePickerResult? result =
+                        await FilePicker.platform.pickFiles();
+                    if (result != null) {
+                      PlatformFile file = result.files.first;
+                      print(file.path);
+                    }
+                  },
+                  label: Text('Upload File'),
+                  icon: Icon(Icons.file_upload),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey,
+                  ))
             ],
           ),
           bottom: PreferredSize(

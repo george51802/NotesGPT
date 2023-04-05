@@ -51,6 +51,9 @@ dependencies:
   google_nav_bar: ^5.0.6
   avatar_glow: ^2.0.2
   speech_to_text: ^6.1.1
+  googleapis: ^10.1.0
+  googleapis_auth: ^1.4.0
+  extension_google_sign_in_as_googleapis_auth: ^2.0.9
 
 dev_dependencies:
   flutter_test:

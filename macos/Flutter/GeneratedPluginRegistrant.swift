@@ -10,9 +10,10 @@ import facebook_auth_desktop
 import firebase_analytics
 import firebase_auth
 import firebase_core
+import firebase_storage
 import flutter_secure_storage_macos
+import mic_stream
 import path_provider_foundation
-import speech_to_text_macos
 import twitter_login
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
@@ -21,8 +22,9 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FLTFirebaseAnalyticsPlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseAnalyticsPlugin"))
   FLTFirebaseAuthPlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseAuthPlugin"))
   FLTFirebaseCorePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseCorePlugin"))
+  FLTFirebaseStoragePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseStoragePlugin"))
   FlutterSecureStoragePlugin.register(with: registry.registrar(forPlugin: "FlutterSecureStoragePlugin"))
+  MicStreamPlugin.register(with: registry.registrar(forPlugin: "MicStreamPlugin"))
   PathProviderPlugin.register(with: registry.registrar(forPlugin: "PathProviderPlugin"))
-  SpeechToTextMacosPlugin.register(with: registry.registrar(forPlugin: "SpeechToTextMacosPlugin"))
   TwitterLoginPlugin.register(with: registry.registrar(forPlugin: "TwitterLoginPlugin"))
 }

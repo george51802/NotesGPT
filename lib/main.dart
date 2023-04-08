@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:notesgpt/chatgpt/chatpage.dart';
 import 'package:notesgpt/net/auth_service.dart';
@@ -11,12 +12,17 @@ import 'package:get/get.dart'; // import Get and HomeController
 import 'package:provider/provider.dart';
 import 'package:notesgpt/chatgpt/conversation_provider.dart';
 
-void main() async {
+import 'net/app_camera_controller.dart';
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  Get.put(HomeView()); // Register HomeController with Get
+
+  Get.put<AppCameraController>(AppCameraController());
+
+  Get.put(HomeView());
   runApp(
     MultiProvider(
       providers: [

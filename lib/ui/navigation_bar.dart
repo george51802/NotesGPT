@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
@@ -59,19 +60,19 @@ class CustomNavigationBar extends StatelessWidget {
                 horizontal: 20, vertical: 12), // navigation bar padding
             tabs: [
               GButton(
-                icon: Icons.home_outlined,
+                icon: CupertinoIcons.house,
                 text: 'Home',
               ),
               GButton(
-                icon: Icons.dashboard_customize_outlined,
+                icon: CupertinoIcons.square_stack,
                 text: 'Notes',
               ),
               GButton(
-                icon: Icons.chat_outlined,
-                text: 'ChatBot',
+                icon: CupertinoIcons.plus,
+                text: 'New Note',
               ),
               GButton(
-                icon: Icons.person_outline,
+                icon: CupertinoIcons.person,
                 text: 'Profile',
               ),
             ],

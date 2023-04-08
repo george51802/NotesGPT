@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:notesgpt/chatgpt/chat_runner.dart';
 import 'package:notesgpt/chatgpt/chatpage.dart';
+import 'package:notesgpt/main.dart';
+import 'package:notesgpt/ui/document_scanning_view.dart';
 import 'package:notesgpt/ui/settings_view.dart';
 import 'package:notesgpt/ui/transcription_view.dart';
 import '../chatgpt/models.dart';
@@ -12,6 +15,7 @@ import 'notes_library.dart';
 import 'package:notesgpt/net/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:notesgpt/chatgpt/conversation_provider.dart';
+import 'package:notesgpt/net/app_camera_controller.dart';
 
 Future<void> addNote(String noteContent) async {
   final user = FirebaseAuth.instance.currentUser;
@@ -51,11 +55,12 @@ class HomeView extends StatelessWidget {
           children: [
             Container(
               height: MediaQuery.of(context).size.height * 0.3 + 40,
+              width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 color: Color(0xff1152FD),
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
+                  bottomLeft: Radius.circular(90),
+                  bottomRight: Radius.circular(90),
                 ),
               ),
               child: Padding(
@@ -65,121 +70,79 @@ class HomeView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                contentPadding:
-                                    EdgeInsets.only(left: 20, top: 6),
-                                hintText: 'Search',
-                                hintStyle: TextStyle(fontSize: 16),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        // Home bar Container
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: IconButton(
-                              icon: Icon(Icons.mic),
-                              color: Color(0xff1152FD),
-                              onPressed: () async {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        TranscriptionView(saveNote: saveNote),
-                                  ),
-                                );
-                              }),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 30),
-                    Text("NoteBot Conversations",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        )),
-                    Expanded(
-                      child: Consumer<ConversationProvider>(
-                        builder: (context, conversationProvider, child) {
-                          return RawScrollbar(
-                            thumbColor: Colors.white,
-                            thickness: 5,
-                            radius: Radius.circular(10),
-                            padding: EdgeInsets.symmetric(horizontal: -3),
-                            child: ListView.builder(
-                              itemCount:
-                                  conversationProvider.conversations.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                Conversation conversation =
-                                    conversationProvider.conversations[index];
-                                return Dismissible(
-                                  key: UniqueKey(),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      conversationProvider
-                                          .currentConversationIndex = index;
-                                      Navigator.pop(context);
-                                    },
-                                    child: Container(
-                                      width: 300,
-                                      padding: const EdgeInsets.all(10.0),
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 7.0, vertical: 4.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        // border: Border.all(color: Color(Colors.grey[200]?.value ?? 0)),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          // coversation icon
-                                          Icon(
-                                            Icons.person,
-                                            color: Colors.grey[700],
-                                            size: 20.0,
-                                          ),
-                                          const SizedBox(width: 15.0),
-                                          Text(
-                                            conversation.title,
-                                            style: TextStyle(
-                                              // fontWeight: FontWeight.bold,
-                                              color: Colors.grey[700],
-                                              //fontFamily: 'din-regular',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
+                    // Heading "Start taking notes"
+                    Text(
+                      'Start taking notes',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                     SizedBox(height: 20),
+                    // Start Recording button
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TranscriptionView(),
+                            ),
+                          );
+                        },
+                        icon: Icon(Icons.mic, color: Color(0xff1152FD)),
+                        label: Text(
+                          "Start Recording",
+                          style: TextStyle(fontSize: 20, color: Colors.black),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    // Document Scanning and Upload a File buttons
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          final appCameraController =
+                              Get.find<AppCameraController>();
+
+                          // Initialize cameras if they are not initialized yet
+                          if (appCameraController.cameras == null) {
+                            await appCameraController.initCameras();
+                          }
+
+                          // Navigate to Document Scanning view
+                          Get.to(DocumentScanningView(
+                              cameras: appCameraController.cameras!));
+                        },
+                        icon: Icon(Icons.document_scanner,
+                            color: Color(0xff1152FD), size: 24),
+                        label: Text(
+                          "Scan/upload a Document",
+                          style: TextStyle(fontSize: 16, color: Colors.black),
+                          textAlign: TextAlign.center,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                    // Upload a File button
+                    SizedBox(height: 4),
                   ],
                 ),
               ),
@@ -191,6 +154,7 @@ class HomeView extends StatelessWidget {
                   Text(
                     'Notes Library',
                     style: TextStyle(
+                      fontFamily: 'SF-Pro',
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -266,13 +230,17 @@ class HomeView extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 10),
-                                Text(
-                                  snapshot.data!.docs[index].get('Notes'),
-                                  style: TextStyle(
-                                    fontSize: 16,
+                                SizedBox(
+                                  height:
+                                      200, // Set an appropriate height based on your design requirements
+                                  child: Text(
+                                    snapshot.data!.docs[index].get('Notes'),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                    maxLines: 10,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 10,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),

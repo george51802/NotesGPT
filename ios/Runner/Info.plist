@@ -62,6 +62,11 @@
 	<string>This app needs access to the microphone to perform speech recognition.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>This app needs speech recognition to convert speech to text.</string>
-
+	<key>NSCameraUsageDescription</key>
+	<string>App requires access to the camera for scanning documents.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>App requires access to the photo library for selecting photos.</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>

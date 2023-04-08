@@ -11,6 +11,88 @@ class NotesLibrary extends StatefulWidget {
   _NotesLibraryState createState() => _NotesLibraryState();
 }
 
+class EditNoteView extends StatefulWidget {
+  final String? noteId;
+  final String? noteContent;
+
+  EditNoteView({this.noteId, this.noteContent});
+
+  @override
+  _EditNoteViewState createState() => _EditNoteViewState();
+}
+
+class _EditNoteViewState extends State<EditNoteView> {
+  TextEditingController _noteTitleController = TextEditingController();
+  TextEditingController _noteContentController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.noteId != null) {
+      _noteTitleController.text = widget.noteId!;
+    }
+    if (widget.noteContent != null) {
+      _noteContentController.text = widget.noteContent!;
+    }
+  }
+
+  @override
+  void dispose() {
+    _noteTitleController.dispose();
+    _noteContentController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.noteId == null ? 'Add Note' : 'Edit Note'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              String noteTitle = _noteTitleController.text;
+              String noteContent = _noteContentController.text;
+
+              if (noteTitle.isNotEmpty && noteContent.isNotEmpty) {
+                // Save the note to Firestore
+                await FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(FirebaseAuth.instance.currentUser?.uid)
+                    .collection('Notes')
+                    .doc(noteTitle)
+                    .set({'Notes': noteContent});
+
+                // Go back to the previous screen
+                Navigator.pop(context);
+              }
+            },
+            icon: Icon(Icons.save),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            TextField(
+              controller: _noteTitleController,
+              decoration: InputDecoration(labelText: 'Note Title'),
+            ),
+            SizedBox(height: 16),
+            TextField(
+              controller: _noteContentController,
+              decoration: InputDecoration(labelText: 'Note Content'),
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _NotesLibraryState extends State<NotesLibrary> {
   TextEditingController _searchController = TextEditingController();
   String _searchText = '';
@@ -103,6 +185,20 @@ class _NotesLibraryState extends State<NotesLibrary> {
             ),
           ),
         ),
+        // Add this to the Scaffold in the NotesLibrary build method
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditNoteView(),
+              ),
+            );
+          },
+          child: Icon(Icons.add, color: Colors.white),
+          backgroundColor: Color(0xff1152FD),
+        ),
+
         body: _buildNotesList(),
       ),
     );
@@ -140,47 +236,61 @@ class _NotesLibraryState extends State<NotesLibrary> {
             final bMatchScore = bTitleMatches + bContentMatches;
             return bMatchScore.compareTo(aMatchScore);
           });
-          return ListView.builder(
-            padding: EdgeInsets.symmetric(vertical: 10.0),
-            itemCount: filteredNotes.length,
-            itemBuilder: (BuildContext context, int index) {
-              final document = filteredNotes[index];
-              return Dismissible(
-                key: Key(document.id),
-                direction: DismissDirection.endToStart,
-                background: Container(
-                  padding: EdgeInsets.only(right: 20.0),
-                  color: Colors.red,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Icon(
-                        Icons.delete,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        'Delete',
-                        style: TextStyle(color: Colors.white),
-                        textAlign: TextAlign.right,
-                      ),
-                    ],
+          return ListView.separated(
+              padding: EdgeInsets.symmetric(vertical: 20.0),
+              itemCount: filteredNotes.length,
+              itemBuilder: (BuildContext context, int index) {
+                final document = filteredNotes[index];
+                return Dismissible(
+                  key: Key(document.id),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    padding: EdgeInsets.only(right: 20.0),
+                    color: Colors.red,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          'Delete',
+                          style: TextStyle(color: Colors.white),
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                onDismissed: (direction) async {
-                  await FirebaseFirestore.instance
-                      .collection('Users')
-                      .doc(FirebaseAuth.instance.currentUser?.uid)
-                      .collection('Notes')
-                      .doc(document.id)
-                      .delete();
-                },
-                child: ListTile(
-                  title: Text(document.id),
-                  subtitle: Text(document.get('Notes')),
-                ),
-              );
-            },
-          );
+                  onDismissed: (direction) async {
+                    await FirebaseFirestore.instance
+                        .collection('Users')
+                        .doc(FirebaseAuth.instance.currentUser?.uid)
+                        .collection('Notes')
+                        .doc(document.id)
+                        .delete();
+                  },
+                  // Change the ListTile in the _buildNotesList method
+                  child: ListTile(
+                    title: Text(document.id),
+                    subtitle: Text(document.get('Notes')),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditNoteView(
+                            noteId: document.id,
+                            noteContent: document.get('Notes'),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Divider();
+              });
         });
   }
 }

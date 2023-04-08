@@ -8,7 +8,7 @@ import 'models.dart';
 class ConversationProvider extends ChangeNotifier {
   List<Conversation> _conversations = [];
   int _currentConversationIndex = 0;
-  String apikey = "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";
+  String apikey = "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";
   String proxy = "";
   List<Conversation> get conversations => _conversations;
   int get currentConversationIndex => _currentConversationIndex;
@@ -41,9 +41,27 @@ class ConversationProvider extends ChangeNotifier {
     return messages;
   }
 
+  void preFeedMessage(String content) {
+    final Message message = Message(
+      senderId: 'system',
+      content: content,
+    );
+    _conversations[_currentConversationIndex].messages.add(message);
+    notifyListeners();
+  }
+
   // initialize provider conversation list
   ConversationProvider() {
-    _conversations.add(Conversation(messages: [], title: 'New Conversation'));
+    _conversations.add(Conversation(
+      messages: [
+        Message(
+          senderId: 'system',
+          content:
+              "Hey there! My name is NoteBot and I'm your note expert. Select a note to get started",
+        )
+      ],
+      title: 'New Conversation',
+    ));
   }
 
   // change conversations
@@ -126,38 +144,6 @@ class ConversationProvider extends ChangeNotifier {
     _conversations[_currentConversationIndex].messages.clear();
     notifyListeners();
   }
-
-  // // Start transcription
-  //   Future<void> startTranscription() async {
-  //   // Request microphone permission
-  //   PermissionStatus permissionStatus = await Permission.microphone.request();
-  //   if (permissionStatus.isGranted) {
-  //     // Initialize FlutterSoundRecorder
-  //     FlutterSoundRecorder _recorder = FlutterSoundRecorder();
-  //     await _recorder.openRecorder();
-
-  //     // Start recording
-  //     await _recorder.startRecorder();
-
-  //     // Stop recording after a specified duration, e.g., 5 seconds
-  //     await Future.delayed(Duration(seconds: 5));
-
-  //     // Stop the recorder
-  //     String? path = await _recorder.stopRecorder();
-
-  //     // Transcribe the recorded audio using Whisper API
-  //     String transcription = await transcribeAudio(path);
-
-  //     // Feed the transcription to ChatGPT
-  //     if (transcription.isNotEmpty) {
-  //       Message message = Message(content: transcription, senderId: 'User');
-  //       addMessage(message);
-  //       // Call the ChatGPT API with the transcription as input
-  //       // Process the response and add the generated message to the conversation
-  //     }
-  //   } else {
-  //     // Handle the case when permission is not granted
-  //   }
 }
 
 const String model = "gpt-3.5-turbo";

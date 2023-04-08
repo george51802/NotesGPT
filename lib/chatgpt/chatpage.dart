@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:auth/auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:notesgpt/ui/home_view.dart';
@@ -40,7 +42,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<Message?> _sendMessage(List<Map<String, String>> messages) async {
     final url = Uri.parse('https://api.openai.com/v1/chat/completions');
-    final apiKey = "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";
+    final apiKey = "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";
     final proxy =
         Provider.of<ConversationProvider>(context, listen: false).yourproxy;
     final converter = JsonUtf8Encoder();
@@ -99,6 +101,63 @@ class _ChatPageState extends State<ChatPage> {
       height,
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeOut,
+    );
+  }
+
+  Future<void> _showNotesDialog(BuildContext context) async {
+    final _conversationProvider =
+        Provider.of<ConversationProvider>(context, listen: false);
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user can tap outside the dialog to close it
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Notes'),
+          content: Container(
+            width: double.maxFinite,
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Users')
+                  .doc(userId)
+                  .collection('Notes')
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Text("Something went wrong");
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+
+                return ListView(
+                  children:
+                      snapshot.data!.docs.map((DocumentSnapshot document) {
+                    return ListTile(
+                      title: Text(document.id),
+                      onTap: () async {
+                        String noteTitle = document.id;
+                        String noteContent = document.get('Notes');
+                        _conversationProvider.preFeedMessage(noteContent);
+
+                        // Send a message to ChatGPT asking about the note
+                        String message =
+                            "Let's talk about the note '$noteTitle'.";
+                        //await _sendMessageToChatGPT(message, context);
+
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -229,52 +288,68 @@ class _ChatPageState extends State<ChatPage> {
                 },
               ),
             ),
-
             // input box
-            Container(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 228, 228, 228),
-                borderRadius: BorderRadius.circular(32.0),
-              ),
-              margin:
-                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 3.0),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(32.0),
-                      ),
-                      child: Center(
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.only(left: 17.0, right: 10.0),
-                          child: TextField(
-                            controller: _textController,
-                            decoration: const InputDecoration.collapsed(
-                              hintText: 'Type here...',
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _showNotesDialog(context);
+                  },
+                  child: Text('Select Notes',
+                      style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xff1152FD),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(32.0),
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 228, 228, 228),
+                    borderRadius: BorderRadius.circular(32.0),
+                  ),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 5.0, horizontal: 3.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 5.0, horizontal: 12.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(32.0),
+                          ),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 17.0, right: 10.0),
+                              child: TextField(
+                                controller: _textController,
+                                decoration: const InputDecoration.collapsed(
+                                  hintText: 'Type here...',
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                      SizedBox(width: 12.0),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xff1152FD),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                            icon: Icon(Icons.play_arrow, color: Colors.white),
+                            onPressed: _sendMessageAndAddToChat),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 12.0),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xff1152FD),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                        icon: Icon(Icons.play_arrow, color: Colors.white),
-                        onPressed: _sendMessageAndAddToChat),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             CustomNavigationBar(
               selectedIndex: 2,

@@ -615,6 +615,9 @@ PODS:
     - firebase_core
     - Flutter
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - edge_detection (1.1.1):
+    - Flutter
+    - WeScan
   - FBAEMKit (15.1.0):
     - FBSDKCoreKit_Basics (= 15.1.0)
   - FBSDKCoreKit (15.1.0):
@@ -848,10 +851,12 @@ PODS:
     - Flutter
   - twitter_login (0.0.1):
     - Flutter
+  - WeScan (1.7.0)
 
 DEPENDENCIES:
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
+  - edge_detection (from `.symlinks/plugins/edge_detection/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -900,12 +905,15 @@ SPEC REPOS:
     - Libuv-gRPC
     - nanopb
     - PromisesObjC
+    - WeScan
 
 EXTERNAL SOURCES:
   camera_avfoundation:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
+  edge_detection:
+    :path: ".symlinks/plugins/edge_detection/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_auth:
@@ -943,6 +951,7 @@ SPEC CHECKSUMS:
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   camera_avfoundation: 3125e8cd1a4387f6f31c6c63abb8a55892a9eeeb
   cloud_firestore: bce8a5ab7401e23094627272006294dcf832a9bb
+  edge_detection: fa02aa120e00d87ada0ca2430b6c6087a501b1e9
   FBAEMKit: c7f82b5145d446bcbbcd50485c032689032fc6a2
   FBSDKCoreKit: 7542746fc63a2a38dd6a865eeb54268341f37b83
   FBSDKCoreKit_Basics: 92d6b26c0bed30ab09bbdd96dccaa26e6c9978d1
@@ -985,6 +994,7 @@ SPEC CHECKSUMS:
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   sound_stream: eba0f2a5994b91d9e5009a739df6e98515a7b44f
   twitter_login: 2794db69b7640681171b17b3c2c84ad9dfb4a57f
+  WeScan: fed582f6c38014d529afb5aa9ffd1bad38fc72b7
 
 PODFILE CHECKSUM: cc1f88378b4bfcf93a6ce00d2c587857c6008d3b
 

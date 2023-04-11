@@ -4,9 +4,11 @@ import 'package:auth/auth.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notesgpt/net/ocr_functions.dart';
 import 'package:http/http.dart' as http;
+import 'package:edge_detection/edge_detection.dart';
 
 import 'notes_library.dart';
 
@@ -35,25 +37,21 @@ class _DocumentScanningViewState extends State<DocumentScanningView> {
   }
 
   Future<void> _takePhoto() async {
-    if (widget.cameras.isEmpty) {
+    try {
+      final imagePath = await EdgeDetection.detectEdge;
+      if (imagePath != null) {
+        setState(() {
+          _image = File(imagePath as String);
+        });
+      }
+    } catch (e) {
+      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("No camera available."),
+          content: Text("Error taking photo: $e"),
         ),
       );
-      return;
     }
-
-    final cameraController =
-        CameraController(widget.cameras[0], ResolutionPreset.max);
-    await cameraController.initialize();
-
-    final image = await cameraController.takePicture();
-    setState(() {
-      _image = File(image.path);
-    });
-
-    await cameraController.dispose();
   }
 
   Future<void> _performOCR() async {
@@ -195,7 +193,7 @@ class _DocumentScanningViewState extends State<DocumentScanningView> {
 
   Future<void> _sendToChatGPT(String transcription) async {
     final apiKey =
-        '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'; // Replace with your actual API key
+        dotenv.env['GPT_API_KEY']; // Replace with your actual API key
     final apiUrl = 'https://api.openai.com/v1/chat/completions';
     final headers = {
       'Content-Type': 'application/json',
@@ -248,39 +246,41 @@ class _DocumentScanningViewState extends State<DocumentScanningView> {
       appBar: AppBar(
         title: Text('Document Scanning'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _image != null
-                ? Image.file(
-                    _image!,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                  )
-                : Text('No image selected'),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _pickImage,
-              child: Text('Pick an Image'),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _takePhoto,
-              child: Text('Take a Photo'),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _performOCR,
-              child: Text(
-                'Scan Text',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              _image != null
+                  ? Image.file(
+                      _image!,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                    )
+                  : Text('No image selected'),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _pickImage,
+                child: Text('Pick an Image'),
               ),
-            ),
-            SizedBox(height: 16),
-          ],
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _takePhoto,
+                child: Text('Take a Photo'),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _performOCR,
+                child: Text(
+                  'Scan Text',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
+                ),
+              ),
+              SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );

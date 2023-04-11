@@ -11,10 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart'; // import Get and HomeController
 import 'package:provider/provider.dart';
 import 'package:notesgpt/chatgpt/conversation_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'net/app_camera_controller.dart';
 
 Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

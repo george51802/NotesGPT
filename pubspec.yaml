@@ -60,6 +60,10 @@ dependencies:
   extension_google_sign_in_as_googleapis_auth: ^2.0.9
   camera: ^0.10.3+2
   image_picker: ^0.8.7+1
+  edge_detection: ^1.1.1
+  path: ^1.8.2
+  dotenv: ^4.1.0
+  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:

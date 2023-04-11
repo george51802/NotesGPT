@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:googleapis/vision/v1.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
 
 Future<String> performOCR(File imageFile) async {
   // Authenticate with Google Cloud Vision API
-  const apiKey = 'AIzaSyDUwMxhnKvwk96wAHp_ylobG6w82EffqQU';
-  final client = await auth.clientViaApiKey(apiKey);
+  String? apiKey = dotenv.env['OCR_API_KEY'];
+  final client = await auth.clientViaApiKey(apiKey!);
   final visionApi = VisionApi(client);
 
   // Read image file as bytes

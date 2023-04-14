@@ -13,7 +13,7 @@ class CustomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70, // Set the desired height
+      height: 100, // Set the desired height
       width:
           360, // Set the desired width, double.infinity will make it take full width
       decoration: BoxDecoration(

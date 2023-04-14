@@ -97,6 +97,72 @@ class _NotesLibraryState extends State<NotesLibrary> {
   TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   bool _showSnackBar = false;
+  Widget buildNotesList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('Users')
+          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .collection('Notes')
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text('Something went wrong'),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (snapshot.data?.docs.length == 0) {
+          return Center(
+            child: Text('No notes found'),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: snapshot.data?.docs.length,
+          itemBuilder: (context, index) {
+            DocumentSnapshot note = snapshot.data!.docs[index];
+            return Card(
+              child: ListTile(
+                title: Text(note.id),
+                subtitle: Text(note['Notes']),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () async {
+                    await FirebaseFirestore.instance
+                        .collection('Users')
+                        .doc(FirebaseAuth.instance.currentUser?.uid)
+                        .collection('Notes')
+                        .doc(note.id)
+                        .delete();
+                    setState(() {
+                      _showSnackBar = true;
+                    });
+                  },
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditNoteView(
+                        noteId: note.id,
+                        noteContent: note['Notes'],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   void initState() {

@@ -7,6 +7,10 @@ import 'package:notesgpt/ui/manage_subscription_view.dart';
 import 'package:notesgpt/ui/welcome_screen.dart';
 import 'package:get/get.dart';
 
+import '../chatgpt/chatpage.dart';
+import 'navigation_bar.dart';
+import 'notes_library.dart';
+
 class UserSettingsView extends StatefulWidget {
   @override
   _UserSettingsViewState createState() => _UserSettingsViewState();
@@ -176,88 +180,145 @@ class _UserSettingsViewState extends State<UserSettingsView> {
         ),
         title: Text('Settings'.tr),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              '${'Hello, '.tr}$_displayName!',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20),
+              Text(
+                '${'Hello, '.tr}$_displayName!',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ),
-          Divider(thickness: 1, height: 30),
-          ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Edit Profile'.tr),
-            onTap: () async {
-              final newName = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditProfileScreen(
-                    currentName: _displayName,
-                  ),
-                ),
-              );
-              if (newName != null) {
-                updateName(newName);
-              }
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.lock),
-            title: Text('Change Password'.tr),
-            onTap: () {
-              _changePasswordDialog(context);
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.language),
-            title: Text('Change Language'.tr),
-            onTap: () {
-              builddialog(context);
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.account_balance_wallet),
-            title: Text('Manage Subscription'.tr),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: ((context) => ManageSubscriptionScreen())),
-              );
-            },
-          ),
-          Expanded(child: Container()),
-          Center(
-            child: Container(
-              margin: EdgeInsets.all(40),
-              child: ElevatedButton(
-                child: Text('signOut'.tr),
-                style: ElevatedButton.styleFrom(
-                  primary: Color(0xff1152FD), // Change the color here
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(13.0),
-                  ),
-                ),
-                onPressed: () {
-                  authService.signOut();
-                  Navigator.of(context).pushReplacement(
+              Divider(thickness: 1, height: 30),
+              buildSettingItem(
+                leading: Icon(Icons.person),
+                title: 'Edit Profile'.tr,
+                onTap: () async {
+                  final newName = await Navigator.push(
+                    context,
                     MaterialPageRoute(
-                      builder: (context) => WelcomeScreen(),
+                      builder: (context) => EditProfileScreen(
+                        currentName: _displayName,
+                      ),
                     ),
+                  );
+                  if (newName != null) {
+                    updateName(newName);
+                  }
+                },
+              ),
+              buildSettingItem(
+                leading: Icon(Icons.lock),
+                title: 'Change Password'.tr,
+                onTap: () {
+                  _changePasswordDialog(context);
+                },
+              ),
+              buildSettingItem(
+                leading: Icon(Icons.language),
+                title: 'Change Language'.tr,
+                onTap: () {
+                  builddialog(context);
+                },
+              ),
+              buildSettingItem(
+                leading: Icon(Icons.account_balance_wallet),
+                title: 'Manage Subscription'.tr,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: ((context) => ManageSubscriptionScreen())),
                   );
                 },
               ),
-            ),
+              SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  child: Text('Sign Out'.tr),
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xff1152FD), // Change the color here
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(13.0),
+                    ),
+                  ),
+                  onPressed: () {
+                    authService.signOut();
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => WelcomeScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 40),
+            ],
           ),
-        ],
+        ),
       ),
+      bottomNavigationBar: CustomNavigationBar(
+        selectedIndex: 3,
+        onTabChange: (index) {
+          // ChatBot Page
+          if (index == 2) {
+            // Assuming ChatBot button is at index 2
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatPage(),
+              ),
+            );
+          }
+          // Notes Library Page
+          else if (index == 1) {
+            // Assuming Notes Library button is at index 1
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NotesLibrary(),
+              ),
+            );
+          }
+          // Profile Page
+          else if (index == 3) {
+            // Assuming Profile button is at index 3
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => UserSettingsView(),
+              ),
+            );
+          }
+          // Home Page
+          else {
+            // Assuming Home button is at index 0
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeView(),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget buildSettingItem(
+      {required Widget leading,
+      required String title,
+      required VoidCallback onTap}) {
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(vertical: 8),
+      leading: leading,
+      title: Text(title),
+      onTap: onTap,
     );
   }
 }

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:notesgpt/ui/notes_library.dart';
 import 'package:sound_stream/sound_stream.dart';
 import 'package:web_socket_channel/io.dart';
@@ -66,7 +67,7 @@ class _TranscriptionViewState extends State<TranscriptionView> {
 
   Future<void> _sendToChatGPT(String transcription) async {
     final apiKey =
-        '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'; // Replace with your actual API key
+        dotenv.env['GPT_API_KEY']; // Replace with your actual API key
     final apiUrl = 'https://api.openai.com/v1/chat/completions';
     final headers = {
       'Content-Type': 'application/json',
@@ -273,77 +274,112 @@ class _TranscriptionViewState extends State<TranscriptionView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff1152FD),
-        centerTitle: true,
-        title: _isRecording
-            ? BlinkingRecordingIndicator()
-            : Text('Start Recording', style: TextStyle(color: Colors.white)),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              child: ListView.builder(
-                itemCount: _finalTranscripts.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Segment ${index + 1}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).accentColor,
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          _finalTranscripts[index],
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(height: 16.0),
-                        Divider(height: 1.0, thickness: 1.0),
-                      ],
+    return WillPopScope(
+      onWillPop: () async {
+        if (_finalTranscripts.isNotEmpty) {
+          return await showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Warning'),
+                  content: Text(
+                      'You will lose your transcription if you leave the page. Are you sure you want to leave?'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: Text('No'),
                     ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: _isRecording ? _stopRecording : _startRecording,
-                  child: Text(
-                      _isRecording ? 'Pause Recording' : 'Start Recording',
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: Text('Yes'),
+                    ),
+                  ],
+                ),
+              ) ??
+              false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color.fromARGB(255, 59, 122, 246),
+          centerTitle: true,
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.mic, color: Colors.white),
+              SizedBox(width: 8),
+              _isRecording
+                  ? BlinkingRecordingIndicator()
+                  : Text('Start Recording',
                       style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    primary: Color(0xff1152FD),
-                    onPrimary: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(32.0),
+            ],
+          ),
+        ),
+        body: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: ListView.builder(
+                  itemCount: _finalTranscripts.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Segment ${index + 1}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).accentColor,
+                            ),
+                          ),
+                          SizedBox(height: 8.0),
+                          Text(
+                            _finalTranscripts[index],
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 16.0),
+                          Divider(height: 1.0, thickness: 1.0),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 16.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: _isRecording ? _stopRecording : _startRecording,
+                    child: Text(
+                        _isRecording ? 'Pause Recording' : 'Start Recording',
+                        style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      primary: Color.fromARGB(255, 59, 122, 246),
+                      onPrimary: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32.0),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(width: 16.0),
-                IconButton(
-                  icon: Icon(Icons.check, size: 32.0),
-                  onPressed: _processTranscription,
-                ),
-              ],
-            ),
-          ],
+                  SizedBox(width: 16.0),
+                  IconButton(
+                    icon: Icon(Icons.check, size: 32.0),
+                    onPressed: _processTranscription,
+                    color: Color.fromARGB(255, 59, 122, 246),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

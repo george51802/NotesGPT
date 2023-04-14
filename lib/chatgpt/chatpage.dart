@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:auth/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:notesgpt/ui/home_view.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<Message?> _sendMessage(List<Map<String, String>> messages) async {
     final url = Uri.parse('https://api.openai.com/v1/chat/completions');
-    final apiKey = "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";
+    final apiKey = dotenv.env['GPT_API_KEY'];
     final proxy =
         Provider.of<ConversationProvider>(context, listen: false).yourproxy;
     final converter = JsonUtf8Encoder();

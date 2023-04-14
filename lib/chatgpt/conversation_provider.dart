@@ -144,6 +144,39 @@ class ConversationProvider extends ChangeNotifier {
     _conversations[_currentConversationIndex].messages.clear();
     notifyListeners();
   }
+
+  Future<String> sendQuery(String text) async {
+    final query = {
+      "model": model,
+      "prompt": {
+        "role": "system",
+        "content":
+            "You are ChatGPT, a helpful assistant. Help the user with their questions and tasks."
+      },
+      "messages": currentConversationMessages +
+          [
+            {"role": "user", "content": text}
+          ],
+    };
+
+    final response = await http.post(
+      Uri.parse("https://api.openai.com/v1/chat/completions"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $apikey",
+      },
+      body: jsonEncode(query),
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      final messageContent = responseBody["choices"][0]["message"]["content"];
+      return messageContent;
+    } else {
+      throw Exception(
+          "Failed to send the query. Status code: ${response.statusCode}");
+    }
+  }
 }
 
 const String model = "gpt-3.5-turbo";

@@ -58,12 +58,13 @@ dependencies:
   googleapis_auth: ^1.4.0
   googleapis: ^10.1.0
   extension_google_sign_in_as_googleapis_auth: ^2.0.9
-  camera: ^0.10.3+2
+  camera: ^0.9.4+8
   image_picker: ^0.8.7+1
   edge_detection: ^1.1.1
   path: ^1.8.2
   dotenv: ^4.1.0
   flutter_dotenv: ^5.0.2
+  flutter_document_scanner: ^0.1.0
 
 dev_dependencies:
   flutter_test:
@@ -96,7 +97,7 @@ flutter:
       - assets/noteslogo3.png
       - assets/signup.png
       - assets/login.png
-  #   - images/a_dot_ham.jpeg
+      - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

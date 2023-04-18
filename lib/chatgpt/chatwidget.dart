@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notesgpt/chatgpt/conversation_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:notesgpt/chatgpt/models.dart';
 
 class ChatWidget extends StatefulWidget {
   @override

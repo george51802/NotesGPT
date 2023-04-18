@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
-class ManageSubscriptionScreen extends StatelessWidget {
+class ManageSubscriptionScreen extends StatefulWidget {
   const ManageSubscriptionScreen({Key? key}) : super(key: key);
+
+  @override
+  _ManageSubscriptionScreenState createState() => _ManageSubscriptionScreenState();
+}
+
+class _ManageSubscriptionScreenState extends State<ManageSubscriptionScreen> {
+  bool _isVisible = true; // Track visibility of the widgets
 
   @override
   Widget build(BuildContext context) {
@@ -12,16 +19,24 @@ class ManageSubscriptionScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          ListTile(
-            leading: Icon(Icons.cancel),
-            title: Text('Unsubscribe'),
-            onTap: () {},
+          AnimatedOpacity(
+            opacity: _isVisible ? 1.0 : 0.0,
+            duration: Duration(milliseconds: 500),
+            child: ListTile(
+              leading: Icon(Icons.cancel),
+              title: Text('Unsubscribe'),
+              onTap: () {},
+            ),
           ),
-          ListTile(
-            leading: Icon(Icons.upgrade),
-            title: Text('Upgrade Subscription'),
-            onTap: () {},
-          )
+          AnimatedOpacity(
+            opacity: _isVisible ? 1.0 : 0.0,
+            duration: Duration(milliseconds: 500),
+            child: ListTile(
+              leading: Icon(Icons.upgrade),
+              title: Text('Upgrade Subscription'),
+              onTap: () {},
+            ),
+          ),
         ],
       ),
     );

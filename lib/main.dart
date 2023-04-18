@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:notesgpt/chatgpt/chatpage.dart';
@@ -35,14 +36,44 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this, // Provide a TickerProvider
+      duration: Duration(milliseconds: 500), // Duration of the animation
+      upperBound: 1.0, // Upper bound of the opacity
+    );
+    _animation = Tween<double>(
+      begin: 0.0, // Starting opacity value
+      end: 1.0, // Ending opacity value
+    ).animate(_animationController);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'NotesGPT',
-      home: AuthService()
-          .handleAuthState(), // Update to use HomeView instead of WelcomeScreen
+      home: FadeTransition(
+        opacity: _animation, // Use the opacity animation
+        child: AuthService().handleAuthState(), // Update to use HomeView instead of WelcomeScreen
+      ),
       routes: {
         '/settings': (context) => UserSettingsView(),
         '/chat': (context) => ChatBotRunner(),

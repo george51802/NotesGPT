@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:notesgpt/chatgpt/conversation_provider.dart';
 import 'package:provider/provider.dart';
 
+import 'models.dart';
+
 class ChatWidget extends StatefulWidget {
   @override
   _ChatWidgetState createState() => _ChatWidgetState();
@@ -10,20 +12,12 @@ class ChatWidget extends StatefulWidget {
 class _ChatWidgetState extends State<ChatWidget> with TickerProviderStateMixin {
   final TextEditingController _textEditingController = TextEditingController();
   late ConversationProvider _conversationProvider;
-  late List<Widget> _messagesWidgets;
 
   @override
   void initState() {
     super.initState();
     _conversationProvider =
         Provider.of<ConversationProvider>(context, listen: false);
-    _messagesWidgets = _buildMessagesList();
-  }
-
-  List<Widget> _buildMessagesList() {
-    return _conversationProvider.currentConversationMessages
-        .map((message) => _buildMessageItem(message))
-        .toList();
   }
 
   Widget _buildMessageItem(Map<String, String> message) {
@@ -42,18 +36,10 @@ class _ChatWidgetState extends State<ChatWidget> with TickerProviderStateMixin {
     _textEditingController.clear();
     _conversationProvider.preFeedMessage(text);
 
-    setState(() {
-      _messagesWidgets = _buildMessagesList();
-    });
-
     String response = await _conversationProvider.sendQuery(text);
 
     _conversationProvider
         .addMessage(Message(senderId: 'System', content: response));
-
-    setState(() {
-      _messagesWidgets = _buildMessagesList();
-    });
   }
 
   @override
@@ -64,8 +50,13 @@ class _ChatWidgetState extends State<ChatWidget> with TickerProviderStateMixin {
         child: Column(
           children: [
             Expanded(
-              child: ListView(
-                children: _messagesWidgets,
+              child: ListView.builder(
+                itemCount:
+                    _conversationProvider.currentConversationMessages.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _buildMessageItem(
+                      _conversationProvider.currentConversationMessages[index]);
+                },
               ),
             ),
             Divider(height: 1.0),

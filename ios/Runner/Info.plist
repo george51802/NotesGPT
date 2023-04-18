@@ -68,5 +68,10 @@
 	<string>App requires access to the photo library for selecting photos.</string>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to your photo library</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow access to your microphone</string>
+
 </dict>
 </plist>

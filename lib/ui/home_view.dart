@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,18 +11,23 @@ import 'package:intl/intl.dart';
 import 'package:notesgpt/chatgpt/chatpage.dart';
 import 'package:notesgpt/ui/settings_view.dart';
 import 'package:notesgpt/ui/transcription_view.dart';
+import 'package:pdf_text/pdf_text.dart';
 import '../chatgpt/models.dart';
 import 'document_scanning_view.dart';
 import 'navigation_bar.dart';
 import 'notes_library.dart';
 import 'package:notesgpt/net/app_camera_controller.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 class HomeView extends StatelessWidget {
   final bool isSubscribed = true; // Set the value of isSubscribed as needed
+  final GlobalKey _scaffoldKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         toolbarHeight: 100,
         backgroundColor: Colors.white,
@@ -82,7 +92,7 @@ class HomeView extends StatelessWidget {
                       'Audio/Video File',
                       Icons.file_copy,
                       () {
-                        // Add code for picking a file
+                        _pickFile(context);
                       },
                     ),
                   ],
@@ -117,7 +127,7 @@ class HomeView extends StatelessWidget {
                       'Audio/Video File',
                       Icons.link,
                       () {
-                        // Add code for picking a file
+                        _transcribeFromUrl(context);
                       },
                     ),
                   ],
@@ -342,4 +352,186 @@ Widget _insightItem(
       ),
     ],
   );
+}
+
+Future<void> _pickFile(BuildContext context) async {
+  final result = await FilePicker.platform.pickFiles(
+    type: FileType.custom,
+    allowedExtensions: ['pdf', 'mp3', 'wav', 'm4a'],
+  );
+
+  if (result != null) {
+    final selectedFile = File(result.files.single.path!);
+    final fileExtension = result.files.single.extension;
+
+    if (fileExtension == 'pdf') {
+      PDFDoc doc = await PDFDoc.fromPath(selectedFile.path);
+      String text = await doc.text;
+
+      // Do something with the extracted text
+    } else if (fileExtension == 'mp3' ||
+        fileExtension == 'wav' ||
+        fileExtension == 'm4a') {
+      String? uploadUrl = await _uploadAudioFile(selectedFile.path);
+      if (uploadUrl != null) {
+        await _transcribeAudioFile(context, uploadUrl);
+      }
+    } else {
+      print('Unsupported file type');
+    }
+  } else {
+    print('No file selected');
+  }
+}
+
+Future<String?> _uploadAudioFile(String filePath) async {
+  var url = Uri.parse('https://api.assemblyai.com/v2/upload');
+  var request = http.MultipartRequest('POST', url);
+  request.headers[HttpHeaders.authorizationHeader] =
+      'b6dd910685dd449baa33c5ddd81422bb';
+
+  File file = File(filePath);
+  request.files.add(http.MultipartFile(
+    'file',
+    ChunkedFileByteStream(file).stream,
+    await file.length(),
+    filename: file.path.split('/').last,
+  ));
+
+  var response = await request.send();
+
+  if (response.statusCode == 200) {
+    var jsonResponse = jsonDecode(await response.stream.bytesToString());
+    return jsonResponse['upload_url'];
+  } else {
+    print('Error uploading audio file: ${response.reasonPhrase}');
+    return null;
+  }
+}
+
+Future<void> _transcribeAudioFile(
+    BuildContext context, String uploadUrl) async {
+  var url = Uri.parse('https://api.assemblyai.com/v2/transcript');
+  var headers = {
+    HttpHeaders.authorizationHeader: 'b6dd910685dd449baa33c5ddd81422bb',
+    HttpHeaders.contentTypeHeader: 'application/json'
+  };
+  var body = jsonEncode({'audio_url': uploadUrl});
+
+  var response = await http.post(url, headers: headers, body: body);
+
+  if (response.statusCode == 200) {
+    var jsonResponse = jsonDecode(response.body);
+    String transcriptionId = jsonResponse['id'];
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("Transcribing audio..."),
+            ],
+          ),
+        );
+      },
+    );
+
+    // Poll for transcription completion and retrieve the transcription text
+    bool transcriptionCompleted = false;
+    while (!transcriptionCompleted) {
+      await Future.delayed(Duration(seconds: 5));
+      var statusResponse = await http.get(
+        Uri.parse('https://api.assemblyai.com/v2/transcript/$transcriptionId'),
+        headers: headers,
+      );
+
+      if (statusResponse.statusCode == 200) {
+        var statusJson = jsonDecode(statusResponse.body);
+        String status = statusJson['status'];
+
+        if (status == 'completed') {
+          transcriptionCompleted = true;
+          Navigator.pop(context); // Dismiss the loading dialog
+          print('Transcription: ${statusJson['text']}');
+        } else if (status == 'error') {
+          transcriptionCompleted = true;
+          Navigator.pop(context); // Dismiss the loading dialog
+          print(
+              'Error during transcription: ${statusJson['detail']} for file: $transcriptionId');
+        }
+      } else {
+        transcriptionCompleted = true;
+        Navigator.pop(context); // Dismiss the loading dialog
+        print('Error checking transcription status: ${response.reasonPhrase}');
+      }
+    }
+  } else {
+    print(
+        'Error submitting audio file for transcription: ${response.reasonPhrase}');
+  }
+}
+
+Future<void> _transcribeFromUrl(BuildContext context) async {
+  TextEditingController urlController = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Enter Audio URL"),
+        content: TextField(
+          controller: urlController,
+          decoration: InputDecoration(hintText: "Enter audio file URL"),
+        ),
+        actions: [
+          TextButton(
+            child: Text("Cancel"),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: Text("Submit"),
+            onPressed: () async {
+              String url = urlController.text;
+              if (url.isNotEmpty) {
+                Navigator.pop(context);
+                await _transcribeAudioFile(context, url);
+              }
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+class ChunkedFileByteStream extends http.ByteStream {
+  final int _chunkSize;
+  final File _file;
+  late Stream<List<int>> _stream;
+
+  ChunkedFileByteStream(this._file, {int chunkSize = 5242880})
+      : _chunkSize = chunkSize,
+        super(Stream.empty()) {
+    _stream = _file.openRead().transform(
+      StreamTransformer.fromHandlers(
+        handleData: (List<int> data, EventSink<List<int>> sink) {
+          int start = 0;
+          while (start < data.length) {
+            int end = start + _chunkSize;
+            if (end > data.length) end = data.length;
+            sink.add(data.sublist(start, end));
+            start = end;
+          }
+        },
+      ),
+    ).asBroadcastStream();
+  }
+
+  @override
+  Stream<List<int>> get stream => _stream;
 }

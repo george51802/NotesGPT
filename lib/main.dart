@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:notesgpt/chatgpt/chatpage.dart';
 import 'package:notesgpt/net/auth_service.dart';
 import 'package:notesgpt/ui/home_view.dart'; // import HomeView
@@ -16,6 +17,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'net/app_camera_controller.dart';
 
 Future<void> main() async {
+  Stripe.publishableKey =
+      'pk_live_51MbwIXL6VtnCHyTVWrpSlIZAwpEDJUgdLyWtsjcKiNxcq6QWxjre05cIqkefVe6Mk2Y1BlqBHidWCENU4TVg7fS1001t8yWrip';
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

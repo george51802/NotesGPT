@@ -233,7 +233,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: ((context) => ManageSubscriptionScreen())),
+                        builder: ((context) => SubscriptionScreen())),
                   );
                 },
               ),

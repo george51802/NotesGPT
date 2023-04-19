@@ -68,8 +68,8 @@ class CustomNavigationBar extends StatelessWidget {
                 text: 'Notes',
               ),
               GButton(
-                icon: CupertinoIcons.plus,
-                text: 'New Note',
+                icon: CupertinoIcons.chat_bubble_text,
+                text: 'NoteBot',
               ),
               GButton(
                 icon: CupertinoIcons.person,

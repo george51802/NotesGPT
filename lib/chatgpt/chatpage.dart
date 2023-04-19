@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:auth/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -200,7 +201,7 @@ class _ChatPageState extends State<ChatPage> {
       onVerticalDragDown: (_) => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Color.fromARGB(255, 228, 228, 228),
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         body: Column(
           children: [
             Expanded(
@@ -311,7 +312,7 @@ class _ChatPageState extends State<ChatPage> {
                     borderRadius: BorderRadius.circular(32.0),
                   ),
                   margin: const EdgeInsets.symmetric(
-                      vertical: 5.0, horizontal: 3.0),
+                      vertical: 0.0, horizontal: 3.0),
                   padding: const EdgeInsets.symmetric(
                       vertical: 5.0, horizontal: 12.0),
                   child: Row(
@@ -344,7 +345,8 @@ class _ChatPageState extends State<ChatPage> {
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
-                            icon: Icon(Icons.play_arrow, color: Colors.white),
+                            icon: Icon(CupertinoIcons.arrow_up_circle_fill,
+                                color: Colors.white, size: 30),
                             onPressed: _sendMessageAndAddToChat),
                       ),
                     ],
@@ -352,52 +354,55 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ],
             ),
-            CustomNavigationBar(
-              selectedIndex: 2,
-              onTabChange: (index) {
-                // ChatBot Page
-                if (index == 2) {
-                  // Assuming ChatBot button is at index 2
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatBotRunner(),
-                    ),
-                  );
-                }
-                // Notes Library Page
-                else if (index == 1) {
-                  // Assuming Notes Library button is at index 1
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NotesLibrary(),
-                    ),
-                  );
-                }
-                // Profile Page
-                else if (index == 3) {
-                  // Assuming Profile button is at index 3
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => UserSettingsView(),
-                    ),
-                  );
-                }
-                // Home Page
-                else {
-                  // Assuming Home button is at index 0
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomeView(),
-                    ),
-                  );
-                }
-              },
-            ),
             SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: CustomNavigationBar(
+                selectedIndex: 2,
+                onTabChange: (index) {
+                  // ChatBot Page
+                  if (index == 2) {
+                    // Assuming ChatBot button is at index 2
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatBotRunner(),
+                      ),
+                    );
+                  }
+                  // Notes Library Page
+                  else if (index == 1) {
+                    // Assuming Notes Library button is at index 1
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotesLibrary(),
+                      ),
+                    );
+                  }
+                  // Profile Page
+                  else if (index == 3) {
+                    // Assuming Profile button is at index 3
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserSettingsView(),
+                      ),
+                    );
+                  }
+                  // Home Page
+                  else {
+                    // Assuming Home button is at index 0
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomeView(),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
           ],
         ),
       ),

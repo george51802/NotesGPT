@@ -9,6 +9,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:notesgpt/net/ocr_functions.dart';
 import 'package:http/http.dart' as http;
 import 'package:edge_detection/edge_detection.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'notes_library.dart';
 
@@ -24,6 +27,8 @@ class DocumentScanningView extends StatefulWidget {
 class _DocumentScanningViewState extends State<DocumentScanningView> {
   File? _image;
   String _extractedText = '';
+  int _selectedIndex = 0;
+  BuildContext? _parentContext;
 
   Future<void> _pickImage() async {
     final pickedFile =
@@ -36,16 +41,54 @@ class _DocumentScanningViewState extends State<DocumentScanningView> {
     }
   }
 
-  Future<void> _takePhoto() async {
+  Future<void> _takePhoto(BuildContext context) async {
+    bool isCameraGranted = await Permission.camera.request().isGranted;
+    if (!isCameraGranted) {
+      isCameraGranted =
+          await Permission.camera.request() == PermissionStatus.granted;
+    }
+
+    if (!isCameraGranted) {
+      print("Error: Camera permission not granted");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error: Camera permission not granted"),
+        ),
+      );
+      return;
+    }
+
+    String imagePath = join(
+      (await getApplicationSupportDirectory()).path,
+      "${(DateTime.now().millisecondsSinceEpoch / 1000).round()}.jpeg",
+    );
+
+    print("Image path: $imagePath");
+
     try {
-      final imagePath = await EdgeDetection.detectEdge;
-      if (imagePath != null) {
+      bool success = await EdgeDetection.detectEdge(
+        imagePath,
+        canUseGallery: true,
+        androidScanTitle: 'Scanning',
+        androidCropTitle: 'Crop',
+        androidCropBlackWhiteTitle: 'Black White',
+        androidCropReset: 'Reset',
+      );
+      if (success) {
         setState(() {
-          _image = File(imagePath as String);
+          _image = File(imagePath);
+          print("Image path after edge detection: $imagePath");
         });
+      } else {
+        print('Error: Edge detection failed');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error: Edge detection failed"),
+          ),
+        );
       }
     } catch (e) {
-      print(e);
+      print("Error taking photo: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error taking photo: $e"),
@@ -54,7 +97,7 @@ class _DocumentScanningViewState extends State<DocumentScanningView> {
     }
   }
 
-  Future<void> _performOCR() async {
+  Future<void> _performOCR(BuildContext context) async {
     if (_image == null) {
       return;
     }
@@ -63,7 +106,7 @@ class _DocumentScanningViewState extends State<DocumentScanningView> {
       final text = await performOCR(_image!);
       setState(() {
         _extractedText = text;
-        _showNotesDialog(context);
+        _showNotesDialog(_parentContext!);
       });
     } catch (e) {
       print(e);
@@ -97,7 +140,7 @@ class _DocumentScanningViewState extends State<DocumentScanningView> {
               child: Text('Generate Notes'),
               onPressed: () {
                 Navigator.of(context).pop();
-                _sendToChatGPT(_extractedText);
+                _sendToChatGPT(_parentContext!, _extractedText);
               },
             ),
           ],
@@ -129,7 +172,7 @@ class _DocumentScanningViewState extends State<DocumentScanningView> {
               onPressed: () {
                 Navigator.of(context).pop();
                 // Call the method to regenerate the notes based on the same transcript
-                _sendToChatGPT(_extractedText);
+                _sendToChatGPT(context, _extractedText);
               },
             ),
             TextButton(
@@ -191,7 +234,8 @@ class _DocumentScanningViewState extends State<DocumentScanningView> {
     );
   }
 
-  Future<void> _sendToChatGPT(String transcription) async {
+  Future<void> _sendToChatGPT(
+      BuildContext context, String transcription) async {
     final apiKey =
         dotenv.env['GPT_API_KEY']; // Replace with your actual API key
     final apiUrl = 'https://api.openai.com/v1/chat/completions';
@@ -240,46 +284,113 @@ class _DocumentScanningViewState extends State<DocumentScanningView> {
     }
   }
 
+  void _onItemTapped(BuildContext context, int index) {
+    setState(() {
+      _selectedIndex = index;
+
+      switch (index) {
+        case 0:
+          _pickImage();
+          break;
+        case 1:
+          _takePhoto(context);
+          break;
+        case 2:
+          _performOCR(context);
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    _parentContext = context;
     return Scaffold(
       appBar: AppBar(
         title: Text('Document Scanning'),
+        backgroundColor: Color(0xff1152FD),
+        elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              _image != null
-                  ? Image.file(
-                      _image!,
-                      width: MediaQuery.of(context).size.width * 0.8,
-                    )
-                  : Text('No image selected'),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _pickImage,
-                child: Text('Pick an Image'),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _takePhoto,
-                child: Text('Take a Photo'),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _performOCR,
-                child: Text(
-                  'Scan Text',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Divider(height: 32, color: Colors.transparent),
+                _image != null
+                    ? FadeInImage(
+                        placeholder: AssetImage(
+                            'assets/loading.gif'), // Use a suitable loading gif
+                        image: FileImage(_image!),
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Color(0xff1152FD)),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.photo_camera,
+                          color: Color(0xff1152FD),
+                          size: 100,
+                        ),
+                      ),
+                Divider(height: 32, color: Colors.transparent),
+                Text(
+                  'Select or capture a document to scan',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              ),
-              SizedBox(height: 16),
-            ],
+                Divider(height: 32, color: Colors.transparent),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () => _onItemTapped(context, 0),
+                      icon: Icon(Icons.photo_library),
+                      label: Text('Gallery'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xff1152FD),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () => _onItemTapped(context, 1),
+                      icon: Icon(Icons.camera_alt),
+                      label: Text('Camera'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xff1152FD),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Divider(height: 32, color: Colors.transparent),
+                ElevatedButton(
+                  onPressed: () => _onItemTapped(context, 2),
+                  child: Text('Scan Document'),
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xff1152FD),
+                    textStyle:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -64,11 +64,11 @@
 	<string>This app needs speech recognition to convert speech to text.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>App requires access to the camera for scanning documents.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>App requires access to the photo library for selecting photos.</string>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to your photo library</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Allow access to your photo library</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow access to your microphone</string>

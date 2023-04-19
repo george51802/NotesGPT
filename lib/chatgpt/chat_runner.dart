@@ -33,8 +33,7 @@ class ChatBotRunner extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           title: Text(
-            Provider.of<ConversationProvider>(context, listen: true)
-                .currentConversationTitle,
+            "test",
             style: const TextStyle(
               fontSize: 20.0, // change font size
               color: Colors.black, // change font color

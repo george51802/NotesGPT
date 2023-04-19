@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:notesgpt/ui/settings_view.dart';
+import '../chatgpt/chatpage.dart';
 import 'navigation_bar.dart';
 import 'home_view.dart';
 import 'package:cupertino_icons/cupertino_icons.dart';
@@ -47,7 +49,11 @@ class _EditNoteViewState extends State<EditNoteView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.noteId == null ? 'Add Note' : 'Edit Note'),
+        backgroundColor: Color(0xff1152FD),
+        title: Text(
+          widget.noteId == null ? 'Add Note' : 'Edit Note',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
         actions: [
           IconButton(
             onPressed: () async {
@@ -67,7 +73,7 @@ class _EditNoteViewState extends State<EditNoteView> {
                 Navigator.pop(context);
               }
             },
-            icon: Icon(Icons.save),
+            icon: Icon(CupertinoIcons.check_mark),
           ),
         ],
       ),
@@ -77,12 +83,22 @@ class _EditNoteViewState extends State<EditNoteView> {
           children: [
             TextField(
               controller: _noteTitleController,
-              decoration: InputDecoration(labelText: 'Note Title'),
+              decoration: InputDecoration(
+                labelText: 'Title',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
             ),
             SizedBox(height: 16),
             TextField(
               controller: _noteContentController,
-              decoration: InputDecoration(labelText: 'Note Content'),
+              decoration: InputDecoration(
+                labelText: 'Body',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
               maxLines: null,
               keyboardType: TextInputType.multiline,
             ),
@@ -97,72 +113,6 @@ class _NotesLibraryState extends State<NotesLibrary> {
   TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   bool _showSnackBar = false;
-  Widget buildNotesList() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('Users')
-          .doc(FirebaseAuth.instance.currentUser?.uid)
-          .collection('Notes')
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-            child: Text('Something went wrong'),
-          );
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        if (snapshot.data?.docs.length == 0) {
-          return Center(
-            child: Text('No notes found'),
-          );
-        }
-
-        return ListView.builder(
-          itemCount: snapshot.data?.docs.length,
-          itemBuilder: (context, index) {
-            DocumentSnapshot note = snapshot.data!.docs[index];
-            return Card(
-              child: ListTile(
-                title: Text(note.id),
-                subtitle: Text(note['Notes']),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () async {
-                    await FirebaseFirestore.instance
-                        .collection('Users')
-                        .doc(FirebaseAuth.instance.currentUser?.uid)
-                        .collection('Notes')
-                        .doc(note.id)
-                        .delete();
-                    setState(() {
-                      _showSnackBar = true;
-                    });
-                  },
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditNoteView(
-                        noteId: note.id,
-                        noteContent: note['Notes'],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 
   @override
   void initState() {
@@ -251,7 +201,6 @@ class _NotesLibraryState extends State<NotesLibrary> {
             ),
           ),
         ),
-        // Add this to the Scaffold in the NotesLibrary build method
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(
@@ -264,7 +213,6 @@ class _NotesLibraryState extends State<NotesLibrary> {
           child: Icon(Icons.add, color: Colors.white),
           backgroundColor: Color(0xff1152FD),
         ),
-
         body: _buildNotesList(),
       ),
     );
@@ -336,26 +284,105 @@ class _NotesLibraryState extends State<NotesLibrary> {
                         .doc(document.id)
                         .delete();
                   },
-                  // Change the ListTile in the _buildNotesList method
-                  child: ListTile(
-                    title: Text(document.id),
-                    subtitle: Text(document.get('Notes')),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditNoteView(
-                            noteId: document.id,
-                            noteContent: document.get('Notes'),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.fromARGB(255, 0, 0, 0).withOpacity(
+                                0.05), // set the color and opacity of the glow
+                            spreadRadius:
+                                5, // set the spread radius of the glow
+                            blurRadius: 10, // set the blur radius of the glow
+                            offset: Offset(0, 0), // set the offset of the glow
                           ),
+                        ]),
+                    margin: EdgeInsets.symmetric(vertical: 4, horizontal: 13),
+                    child: ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      title: Text(
+                        document.id,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
-                      );
-                    },
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          document.get('Notes'),
+                          maxLines: 20,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditNoteView(
+                              noteId: document.id,
+                              noteContent: document.get('Notes'),
+                            ),
+                          ),
+                        );
+                        CustomNavigationBar(
+                          selectedIndex: 0,
+                          onTabChange: (index) {
+                            // ChatBot Page
+                            if (index == 2) {
+                              // Assuming ChatBot button is at index 2
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatPage(),
+                                ),
+                              );
+                            }
+                            // Notes Library Page
+                            else if (index == 1) {
+                              // Assuming Notes Library button is at index 1
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NotesLibrary(),
+                                ),
+                              );
+                            }
+                            // Profile Page
+                            else if (index == 3) {
+                              // Assuming Profile button is at index 3
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserSettingsView(),
+                                ),
+                              );
+                            }
+                            // Home Page
+                            else {
+                              // Assuming Home button is at index 0
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomeView(),
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      },
+                    ),
                   ),
                 );
               },
               separatorBuilder: (BuildContext context, int index) {
-                return Divider();
+                return SizedBox(height: 20);
               });
         });
   }
